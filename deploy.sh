@@ -61,7 +61,11 @@ cp dist/presentation.bundle.js "$TEMP_DIR/"
 cp map.html "$TEMP_DIR/"
 cp scenes.json "$TEMP_DIR/"
 cp -r css "$TEMP_DIR/"
-cp -r models "$TEMP_DIR/"
+
+# Copy models but exclude uncompressed folder (too big for GitHub)
+mkdir -p "$TEMP_DIR/models"
+cp models/*.glb "$TEMP_DIR/models/" 2>/dev/null || true
+cp models/*.json "$TEMP_DIR/models/" 2>/dev/null || true
 
 # Create the production index.html
 cat > "$TEMP_DIR/index.html" << 'EOF'
@@ -75,14 +79,14 @@ cat > "$TEMP_DIR/index.html" << 'EOF'
     <link rel="stylesheet" href="css/presentation.css">
 </head>
 <body>
-    <div id="loading">
-        <div class="loader"></div>
-        <p style="margin-top: 20px; color: rgba(245, 240, 232, 0.7);">Načítám...</p>
-    </div>
-
     <div class="container">
         <div class="scene-container">
             <div id="canvas-container"></div>
+            <!-- Loading indicator inside 3D scene only -->
+            <div id="sceneLoading" class="scene-loading">
+                <div class="loader"></div>
+                <p>Načítám 3D...</p>
+            </div>
         </div>
         <div class="content-container" id="contentContainer"></div>
     </div>
@@ -104,8 +108,18 @@ echo -e "\n${YELLOW}🌐 Deploying to gh-pages branch...${NC}"
 # Stash any uncommitted changes on current branch
 git stash --quiet 2>/dev/null || true
 
-# Switch to gh-pages branch
-git checkout gh-pages
+# Check if gh-pages branch exists locally or remotely
+if git show-ref --verify --quiet refs/heads/gh-pages 2>/dev/null; then
+    echo "📌 Switching to existing gh-pages branch"
+    git checkout gh-pages
+elif git show-ref --verify --quiet refs/remotes/origin/gh-pages 2>/dev/null; then
+    echo "📌 Checking out gh-pages from remote"
+    git checkout -b gh-pages origin/gh-pages
+else
+    echo "📌 Creating new orphan gh-pages branch"
+    git checkout --orphan gh-pages
+    git rm -rf . 2>/dev/null || true
+fi
 
 # Remove old files (except .git)
 find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
