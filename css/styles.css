@@ -1,0 +1,570 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: #1a1a2e;
+}
+
+#canvas-container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* Loading Screen */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    transition: opacity 0.5s ease;
+}
+
+#loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #e94560;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Controls Panel */
+#controls-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 20px;
+    overflow-y: auto;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    border-left: 1px solid rgba(233, 69, 96, 0.3);
+}
+
+#controls-panel.hidden {
+    transform: translateX(100%);
+}
+
+#controls-panel h3 {
+    color: #e94560;
+    margin-bottom: 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#controls-panel h4 {
+    color: #ffffff;
+    font-size: 12px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.control-section {
+    margin-bottom: 20px;
+}
+
+.control-section select,
+.control-section input[type="range"] {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.control-section select {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.control-section select:focus {
+    outline: none;
+    border-color: #e94560;
+}
+
+.control-section select option {
+    background: #1a1a2e;
+    color: white;
+}
+
+.control-section input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.control-section input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #e94560;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.control-section input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.control-section input[type="color"] {
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.control-section input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.control-section input[type="color"]::-webkit-color-swatch {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+}
+
+.control-section span {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    float: right;
+    margin-top: -3px;
+}
+
+.control-section button {
+    width: 100%;
+    padding: 12px;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.control-section button:hover {
+    background: #ff6b6b;
+    transform: translateY(-2px);
+}
+
+.control-section button:active {
+    transform: translateY(0);
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: 0.4s;
+    border-radius: 26px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #e94560;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+.help-text {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.help-text p {
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.help-text strong {
+    color: #e94560;
+}
+
+/* Toggle Panel Button */
+#togglePanel {
+    position: fixed;
+    top: 20px;
+    right: 320px;
+    width: 44px;
+    height: 44px;
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid rgba(233, 69, 96, 0.3);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 101;
+    transition: right 0.3s ease, background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#togglePanel:hover {
+    background: #e94560;
+}
+
+#togglePanel.panel-hidden {
+    right: 20px;
+}
+
+/* Scrollbar Styling */
+#controls-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#controls-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#controls-panel::-webkit-scrollbar-thumb {
+    background: rgba(233, 69, 96, 0.5);
+    border-radius: 3px;
+}
+
+#controls-panel::-webkit-scrollbar-thumb:hover {
+    background: #e94560;
+}
+
+/* Add Model Row */
+.add-model-row {
+    display: flex;
+    gap: 8px;
+}
+
+.add-model-row select {
+    flex: 1;
+}
+
+.add-model-row button {
+    width: auto;
+    padding: 8px 16px;
+    white-space: nowrap;
+}
+
+/* Objects List */
+.objects-list {
+    max-height: 150px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.object-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+}
+
+.object-item:last-child {
+    border-bottom: none;
+}
+
+.object-item:hover {
+    background: rgba(233, 69, 96, 0.2);
+}
+
+.object-item.selected {
+    background: rgba(233, 69, 96, 0.4);
+    border-left: 3px solid #e94560;
+}
+
+/* Button Row */
+.button-row {
+    display: flex;
+    gap: 8px;
+}
+
+.button-row button {
+    flex: 1;
+    padding: 8px;
+    font-size: 11px;
+}
+
+.danger-btn {
+    background: #6c3a3a !important;
+}
+
+.danger-btn:hover {
+    background: #8b4a4a !important;
+}
+
+/* Transform Grid */
+.transform-grid {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 12px;
+    border-radius: 6px;
+}
+
+.transform-grid label {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+
+.transform-grid label:first-child {
+    margin-top: 0;
+}
+
+.transform-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.transform-row span {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    float: none;
+    margin: 0;
+}
+
+.transform-row input[type="number"] {
+    flex: 1;
+    width: 60px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.transform-row input[type="number"]:focus {
+    outline: none;
+    border-color: #e94560;
+}
+
+/* Save Scene Row */
+.save-scene-row {
+    display: flex;
+    gap: 8px;
+}
+
+.save-scene-row input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.save-scene-row input[type="text"]::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.save-scene-row input[type="text"]:focus {
+    outline: none;
+    border-color: #e94560;
+}
+
+.save-scene-row button {
+    width: auto;
+    padding: 8px 16px;
+    white-space: nowrap;
+}
+
+/* Scenes List */
+.scenes-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.no-scenes {
+    padding: 20px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+}
+
+.scene-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.scene-item:last-child {
+    border-bottom: none;
+}
+
+.scene-item:hover {
+    background: rgba(233, 69, 96, 0.1);
+}
+
+.scene-item.active {
+    background: rgba(233, 69, 96, 0.2);
+    border-left: 3px solid #e94560;
+}
+
+.scene-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.scene-info strong {
+    display: block;
+    font-size: 13px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scene-info small {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.scene-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.scene-actions button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    font-size: 14px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scene-actions .load-btn {
+    background: #4a6fa5;
+}
+
+.scene-actions .load-btn:hover {
+    background: #5a8fd5;
+}
+
+.scene-actions .delete-btn {
+    background: #6c3a3a;
+}
+
+.scene-actions .delete-btn:hover {
+    background: #8b4a4a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #controls-panel {
+        width: 100%;
+        height: 50vh;
+        top: auto;
+        bottom: 0;
+        transform: translateY(0);
+        border-left: none;
+        border-top: 1px solid rgba(233, 69, 96, 0.3);
+    }
+
+    #controls-panel.hidden {
+        transform: translateY(100%);
+    }
+
+    #togglePanel {
+        top: auto;
+        bottom: calc(50vh + 20px);
+        right: 20px;
+    }
+
+    #togglePanel.panel-hidden {
+        bottom: 20px;
+    }
+}

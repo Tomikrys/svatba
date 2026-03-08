@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa - Svatba Tomáš & Eliška</title>
+    
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Playfair Display', Georgia, serif;
+            background: #1a1a2e;
+            color: #e8e4dc;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #c9a959;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 4px;
+        }
+        
+        .map-widget {
+            background: rgba(20, 20, 35, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+        }
+        .tab {
+            flex: 1;
+            padding: 16px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        .tab:hover { 
+            color: #c9a959; 
+            background: rgba(201,169,89,0.1); 
+        }
+        .tab.active { 
+            color: #c9a959; 
+            background: rgba(201,169,89,0.15);
+            border-bottom-color: #c9a959;
+        }
+        .tab-emoji { margin-right: 8px; }
+        
+        /* Map body layout */
+        .map-body {
+            display: flex;
+        }
+        
+        /* Vertical pager */
+        .pager {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px 15px;
+            background: rgba(0,0,0,0.2);
+            border-right: 1px solid rgba(201,169,89,0.2);
+        }
+        .pager-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(201, 169, 89, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .pager-dot:hover {
+            background: rgba(201, 169, 89, 0.6);
+            transform: scale(1.1);
+        }
+        .pager-dot.active {
+            background: #c9a959;
+            box-shadow: 0 0 10px rgba(201, 169, 89, 0.6);
+        }
+        .pager-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(20, 20, 35, 0.98);
+            color: #c9a959;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+            z-index: 100;
+        }
+        .pager-dot:hover::after {
+            opacity: 1;
+        }
+        
+        /* Main map area */
+        .map-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Map layer selector */
+        .map-layers {
+            display: flex;
+            gap: 5px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(201,169,89,0.2);
+        }
+        .layer-btn {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            background: rgba(201,169,89,0.1);
+            border: 1px solid rgba(201,169,89,0.2);
+            color: #888;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .layer-btn:hover {
+            color: #c9a959;
+            background: rgba(201,169,89,0.2);
+        }
+        .layer-btn.active {
+            color: #c9a959;
+            background: rgba(201,169,89,0.3);
+            border-color: #c9a959;
+        }
+        
+        #map {
+            height: 400px;
+            background: #1a1a2e;
+        }
+        
+        /* Loading indicator */
+        .map-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20,20,35,0.9);
+            color: #c9a959;
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
+        }
+        .map-loading.visible {
+            display: block;
+        }
+        
+        /* Step info */
+        .step-info {
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            color: #c9a959;
+            font-size: 1.1rem;
+            margin: 0 0 4px 0;
+            font-weight: 400;
+        }
+        .step-desc {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        .step-duration {
+            color: #c9a959;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        
+        /* Navigation buttons */
+        .step-nav {
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            background: rgba(201,169,89,0.2);
+            border: 1px solid rgba(201,169,89,0.3);
+            color: #c9a959;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(201,169,89,0.3);
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        /* Links */
+        .map-links {
+            padding: 14px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(201,169,89,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .map-links a {
+            color: #c9a959;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .map-links a:hover { text-decoration: underline; }
+        
+        /* Mapy.cz logo requirement */
+        .mapy-logo {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+        .mapy-logo img {
+            height: 24px;
+        }
+        
+        /* Leaflet overrides */
+        .leaflet-control-attribution {
+            background: rgba(0,0,0,0.7) !important;
+            color: #888 !important;
+            font-size: 10px;
+        }
+        .leaflet-control-attribution a { color: #c9a959 !important; }
+        .leaflet-control-zoom a {
+            background: rgba(20,20,35,0.9) !important;
+            color: #c9a959 !important;
+            border-color: rgba(201,169,89,0.3) !important;
+        }
+        
+        /* Custom markers */
+        .custom-marker {
+            background: transparent;
+            border: none;
+        }
+        .marker-label {
+            background: rgba(20,20,35,0.95);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            border: 1px solid rgba(201,169,89,0.4);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .animated-marker {
+            width: 16px;
+            height: 16px;
+            background: #4865df;
+            border: 3px solid #e1e2de;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(72,101,223,0.8);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(72,101,223,0.8); }
+            50% { box-shadow: 0 0 25px rgba(72,101,223,1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JAK SE K NÁM DOSTANETE</h1>
+        
+        <div class="map-widget">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="car">
+                    <span class="tab-emoji">🚗</span> Autem
+                </button>
+                <button class="tab" data-tab="train">
+                    <span class="tab-emoji">🚂</span> Vlakem
+                </button>
+            </div>
+            
+            <!-- Map body -->
+            <div class="map-body">
+                <!-- Pager -->
+                <div class="pager" id="pager"></div>
+                
+                <!-- Main area -->
+                <div class="map-main">
+                    <!-- Layer selector -->
+                    <div class="map-layers">
+                        <button class="layer-btn active" data-layer="outdoor">🥾 Turistická</button>
+                        <button class="layer-btn" data-layer="aerial">🛰️ Satelit</button>
+                    </div>
+                    
+                    <div id="map" style="position: relative;">
+                        <div class="map-loading" id="mapLoading">Načítám trasu...</div>
+                    </div>
+                    
+                    <div class="step-info" id="stepInfo">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Links -->
+            <div class="map-links" id="mapLinks">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ==============================================
+        // CONFIGURATION
+        // ==============================================
+        
+        // Mapy.cz API key
+        const MAPY_API_KEY = '1uZ3W2Yf7_7f0tnlYW_un5_v8A7Z6Q3mb84iqIWSzFk';
+        
+        // Use Mapy.cz tiles with API key
+        const USE_FREE_TILES = false;
+        
+        // Key locations (accurate coordinates)
+        const LOCATIONS = {
+            church: { 
+                lat: 49.19754653975549, 
+                lng: 16.6032530901071, 
+                name: 'Červený kostel', 
+                icon: '⛪',
+                address: 'Komenského nám., Brno'
+            },
+            brnoStation: { 
+                lat: 49.18958491634403, 
+                lng: 16.609942201386144, 
+                name: 'Brno hl. n.', 
+                icon: '🚂',
+                address: 'Nádražní 1, Brno'
+            },
+            parking: { 
+                lat: 48.97845, 
+                lng: 16.31720, 
+                name: 'Parkování', 
+                icon: '🅿️',
+                address: 'U areálu Veselky'
+            },
+            bohutice: { 
+                lat: 48.98790034464077, 
+                lng: 16.355912488657392, 
+                name: 'Bohutice', 
+                icon: '🚉',
+                address: 'Vlaková stanice'
+            },
+            venue: { 
+                lat: 48.97776495038363, 
+                lng: 16.318344138294613, 
+                name: 'Veselka', 
+                icon: '🎉',
+                address: 'Miroslavské Knínice 186'
+            },
+            tents: { 
+                lat: 48.97815, 
+                lng: 16.31880, 
+                name: 'Stany', 
+                icon: '⛺',
+                address: 'Ubytování'
+            }
+        };
+        
+        // Highlight areas (polygons)
+        const AREAS = {
+            parkování: {
+                color: '#e53935',
+                fillColor: '#e53935',
+                coords: [
+                    [48.978452, 16.317701],
+                    [48.977956, 16.317825],
+                    [48.977952, 16.317959],
+                    [48.978441, 16.317825]
+                ]
+            },
+            stanování: {
+                color: '#4caf50',
+                fillColor: '#4caf50',
+                coords: [
+                    [48.977969, 16.318463],
+                    [48.978405, 16.318855],
+                    [48.978331, 16.319069],
+                    [48.977867, 16.31871]
+                ]
+            },
+            bazén: {
+                color: '#00bcd4',
+                fillColor: '#00bcd4',
+                coords: [
+                    [48.977371, 16.320754],
+                    [48.977312, 16.320544],
+                    [48.977164, 16.320646],
+                    [48.977093, 16.321129],
+                    [48.977294, 16.321215]
+                ]
+            },
+            veselka: {
+                color: '#9c27b0',
+                fillColor: '#9c27b0',
+                coords: [
+                    [48.977888, 16.317868],
+                    [48.977898, 16.318592],
+                    [48.977666, 16.318651],
+                    [48.977662, 16.317878]
+                ]
+            },
+            zámecký_park: {
+                color: '#ff9800',
+                fillColor: '#ff9800',
+                coords: [
+                    [48.977614, 16.31923],
+                    [48.977311, 16.319396],
+                    [48.977392, 16.320641],
+                    [48.977596, 16.321006],
+                    [48.977677, 16.321049],
+                    [48.977811, 16.320561],
+                    [48.97816, 16.320464],
+                    [48.978223, 16.320142],
+                    [48.978019, 16.319702]
+                ]
+            }
+        };
+        
+        // Steps for each tab
+        const STEPS = {
+            car: [
+                {
+                    id: 'start',
+                    title: '⛪ Obřad',
+                    desc: 'Červený kostel, Komenského nám.',
+                    center: [49.19754653975549, 16.6032530901071],
+                    zoom: 16,
+                    markers: ['church'],
+                    route: null,
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'route',
+                    title: '🚗 Cesta autem',
+                    desc: 'Brno → Miroslavské Knínice',
+                    center: [49.08, 16.46],
+                    zoom: 10,
+                    markers: ['church', 'venue'],
+                    route: { from: 'church', to: 'venue', type: 'car_fast' },
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'end',
+                    title: '🎉 Areál Veselky',
+                    desc: 'Parkování, stanování, veselka, bazén, park',
+                    center: [48.9778, 16.3193],
+                    zoom: 18,
+                    markers: [],
+                    route: null,
+                    areas: ['parkování', 'stanování', 'veselka', 'bazén', 'zámecký_park'],
+                    forceLayer: 'aerial'
+                }
+            ],
+            train: [
+                {
+                    id: 'start',
+                    title: '⛪ Obřad',
+                    desc: 'Červený kostel, Komenského nám.',
+                    center: [49.19754653975549, 16.6032530901071],
+                    zoom: 16,
+                    markers: ['church'],
+                    route: null,
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'toStation',
+                    title: '🚶 Na nádraží',
+                    desc: 'Kostel → Brno hl. n.',
+                    center: [49.193, 16.606],
+                    zoom: 15,
+                    markers: ['church', 'brnoStation'],
+                    route: { from: 'church', to: 'brnoStation', type: 'foot_fast' },
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'stationDetail',
+                    title: '🚂 Brno hl. nádraží',
+                    desc: 'Detail hlavního nádraží',
+                    center: [49.18958491634403, 16.609942201386144],
+                    zoom: 17,
+                    markers: ['brnoStation'],
+                    route: null,
+                    areas: [],
+                    forceLayer: 'aerial'
+                },
+                {
+                    id: 'train',
+                    title: '🚂 Vlakem',
+                    desc: 'Brno hl. n. → Bohutice',
+                    center: [49.09, 16.48],
+                    zoom: 10,
+                    markers: ['brnoStation', 'bohutice'],
+                    route: { from: 'brnoStation', to: 'bohutice', type: 'train_line' },
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'shuttle',
+                    title: '🚐 Z nádraží na Veselku',
+                    desc: 'Bohutice → Knínice',
+                    center: [48.983, 16.337],
+                    zoom: 13,
+                    markers: ['bohutice', 'venue'],
+                    route: null,
+                    dualRoute: true,  // Show both car and walking route
+                    areas: [],
+                    forceLayer: 'outdoor'
+                },
+                {
+                    id: 'venueDetail',
+                    title: '🎉 Areál Veselky',
+                    desc: 'Stanování, veselka, bazén, park',
+                    center: [48.9778, 16.3193],
+                    zoom: 18,
+                    markers: [],
+                    route: null,
+                    areas: ['parkování', 'stanování', 'veselka', 'bazén', 'zámecký_park'],
+                    forceLayer: 'aerial'
+                }
+            ]
+        };
+        
+        // Route colors - unified blue with white border
+        const ROUTE_COLOR = '#4865df';
+        const ROUTE_BORDER_COLOR = '#e1e2de';
+        
+        // Dual route colors
+        const SHUTTLE_COLOR = '#4865df';    // Blue for car shuttle
+        const WALK_COLOR = '#e53935';        // Red for walking (tourist path)
+        
+        // Fallback routes (used when API fails)
+        const FALLBACK_ROUTES = {
+            car_fast: {
+                'church_venue': {
+                    coords: [[49.1951, 16.6088], [49.1850, 16.5950], [49.1500, 16.5400], [49.0800, 16.4300], [49.0200, 16.3600], [48.9800, 16.3300], [48.9778, 16.3183]],
+                    length: 50000,
+                    duration: 2700
+                }
+            },
+            foot_fast: {
+                'church_brnoStation': {
+                    coords: [[49.1951, 16.6088], [49.1930, 16.6090], [49.1910, 16.6095], [49.1896, 16.6099]],
+                    length: 800,
+                    duration: 600
+                }
+            },
+            train_line: {
+                'brnoStation_bohutice': {
+                    coords: [[49.1896, 16.6099], [49.1700, 16.5900], [49.1200, 16.5000], [49.0500, 16.4200], [48.9879, 16.3559]],
+                    length: 45000,
+                    duration: 3000
+                }
+            }
+        };
+        
+        // ==============================================
+        // STATE
+        // ==============================================
+        
+        let map = null;
+        let activeTab = 'car';
+        let currentStep = 0;
+        let activeLayer = 'outdoor';
+        let layers = [];
+        let tileLayer = null;
+        let animationTimer = null;
+        let routeCache = {};
+        
+        // ==============================================
+        // INITIALIZATION
+        // ==============================================
+        
+        function init() {
+            initMap();
+            setupTabs();
+            setupLayers();
+            showStep(0);
+        }
+        
+        function initMap() {
+            map = L.map('map', {
+                center: [49.1, 16.5],
+                zoom: 11,
+                zoomControl: true
+            });
+            
+            // Set initial tile layer
+            setTileLayer(activeLayer);
+            
+            // Add Mapy.cz logo (required by ToS)
+            addMapyLogo();
+        }
+        
+        function setTileLayer(layerName) {
+            if (tileLayer) {
+                map.removeLayer(tileLayer);
+            }
+            
+            activeLayer = layerName;
+            
+            if (USE_FREE_TILES) {
+                // Use free CartoDB tiles
+                const tileUrls = {
+                    basic: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                    outdoor: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                    aerial: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                };
+                
+                tileLayer = L.tileLayer(tileUrls[layerName] || tileUrls.basic, {
+                    attribution: '&copy; OSM contributors',
+                    maxZoom: 19
+                }).addTo(map);
+            } else {
+                // Use Mapy.cz tiles
+                tileLayer = L.tileLayer(
+                    `https://api.mapy.com/v1/maptiles/${layerName}/256/{z}/{x}/{y}?apikey=${MAPY_API_KEY}`,
+                    {
+                        attribution: '<a href="https://api.mapy.com/copyright" target="_blank">&copy; Seznam.cz a.s.</a>',
+                        maxZoom: 20
+                    }
+                ).addTo(map);
+            }
+            
+            // Update button states
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.layer === layerName);
+            });
+        }
+        
+        function addMapyLogo() {
+            if (!USE_FREE_TILES) {
+                const LogoControl = L.Control.extend({
+                    options: { position: 'bottomleft' },
+                    onAdd: function() {
+                        const container = L.DomUtil.create('div', 'mapy-logo');
+                        const link = L.DomUtil.create('a', '', container);
+                        link.href = 'https://mapy.com/';
+                        link.target = '_blank';
+                        link.innerHTML = '<img src="https://api.mapy.com/img/api/logo.svg" alt="Mapy.cz" />';
+                        L.DomEvent.disableClickPropagation(link);
+                        return container;
+                    }
+                });
+                new LogoControl().addTo(map);
+            }
+        }
+        
+        // ==============================================
+        // EVENT SETUP
+        // ==============================================
+        
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    activeTab = tab.dataset.tab;
+                    currentStep = 0;
+                    showStep(0);
+                });
+            });
+        }
+        
+        function setupLayers() {
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTileLayer(btn.dataset.layer);
+                });
+            });
+        }
+        
+        // Scroll wheel navigation
+        document.querySelector('.map-widget').addEventListener('wheel', (e) => {
+            if (!e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY > 0) nextStep();
+                else prevStep();
+            }
+        }, { passive: false });
+        
+        // ==============================================
+        // PAGER
+        // ==============================================
+        
+        function updatePager() {
+            const pager = document.getElementById('pager');
+            const steps = STEPS[activeTab];
+            
+            pager.innerHTML = steps.map((step, i) => 
+                `<div class="pager-dot ${i === currentStep ? 'active' : ''}" 
+                      data-step="${i}" 
+                      data-label="${step.title}"></div>`
+            ).join('');
+            
+            pager.querySelectorAll('.pager-dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    showStep(parseInt(dot.dataset.step));
+                });
+            });
+        }
+        
+        // ==============================================
+        // STEP DISPLAY
+        // ==============================================
+        
+        async function showStep(index) {
+            const steps = STEPS[activeTab];
+            if (index < 0 || index >= steps.length) return;
+            
+            currentStep = index;
+            const step = steps[index];
+            
+            clearLayers();
+            
+            // Animate map view first
+            map.flyTo(step.center, step.zoom, { duration: 0.8 });
+            
+            // Switch layer AFTER animation completes (if needed)
+            if (step.forceLayer && activeLayer !== step.forceLayer) {
+                // Wait for flyTo to complete before switching layer
+                map.once('moveend', () => {
+                    setTileLayer(step.forceLayer);
+                });
+            }
+            
+            // Add highlighted areas first (under markers)
+            if (step.areas && step.areas.length > 0) {
+                step.areas.forEach(areaId => {
+                    const area = AREAS[areaId];
+                    if (area) addArea(areaId, area);
+                });
+            }
+            
+            // Add markers
+            step.markers.forEach(locId => {
+                const loc = LOCATIONS[locId];
+                if (loc) addMarker(loc);
+            });
+            
+            // Add route if needed
+            let routeInfo = null;
+            if (step.dualRoute) {
+                // Special dual route: car shuttle + walking path
+                showLoading(true);
+                try {
+                    await addDualRoutes();
+                } catch (e) {
+                    console.warn('Dual route loading failed:', e);
+                } finally {
+                    showLoading(false);
+                }
+            } else if (step.route) {
+                showLoading(true);
+                try {
+                    routeInfo = await addRoute(step.route);
+                } catch (e) {
+                    console.warn('Route loading failed:', e);
+                } finally {
+                    showLoading(false);
+                }
+            }
+            
+            // Update UI
+            updatePager();
+            updateStepInfo(step, routeInfo);
+            updateLinks();
+        }
+        
+        // ==============================================
+        // AREAS (HIGHLIGHTS)
+        // ==============================================
+        
+        function addArea(areaId, area) {
+            // Draw polygon
+            const polygon = L.polygon(area.coords, {
+                color: area.color,
+                fillColor: area.fillColor,
+                fillOpacity: 0.4,
+                weight: 3
+            }).addTo(map);
+            layers.push(polygon);
+            
+            // Add label for area using the area name (replace underscore with space)
+            const center = polygon.getBounds().getCenter();
+            const labelName = areaId.replace(/_/g, ' ');
+            const labelIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div class="marker-label" style="background: ${area.color}; border-color: ${area.color}; font-weight: bold;">${labelName}</div>`,
+                iconSize: [100, 30],
+                iconAnchor: [50, 15]
+            });
+            const labelMarker = L.marker(center, { icon: labelIcon }).addTo(map);
+            layers.push(labelMarker);
+        }
+        
+        // ==============================================
+        // MARKERS
+        // ==============================================
+        
+        function addMarker(loc) {
+            const icon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div class="marker-label">${loc.icon} ${loc.name}</div>`,
+                iconSize: [120, 35],
+                iconAnchor: [60, 17]
+            });
+            
+            const marker = L.marker([loc.lat, loc.lng], { icon }).addTo(map);
+            layers.push(marker);
+        }
+        
+        // ==============================================
+        // ROUTING
+        // ==============================================
+        
+        async function addRoute(routeConfig) {
+            const fromLoc = LOCATIONS[routeConfig.from];
+            const toLoc = LOCATIONS[routeConfig.to];
+            const routeType = routeConfig.type;
+            const cacheKey = `${routeConfig.from}_${routeConfig.to}_${routeType}`;
+            
+            // Check cache first
+            if (routeCache[cacheKey]) {
+                displayRoute(routeCache[cacheKey], routeType);
+                return routeCache[cacheKey];
+            }
+            
+            // Special handling for train routes (no car routing)
+            if (routeType === 'train_line') {
+                const fallback = getFallbackRoute(routeConfig);
+                if (fallback) {
+                    displayRoute(fallback, routeType);
+                    routeCache[cacheKey] = fallback;
+                    return fallback;
+                }
+            }
+            
+            // Try Mapy.cz API for routing with timeout
+            if (!USE_FREE_TILES) {
+                try {
+                    const url = new URL('https://api.mapy.com/v1/routing/route');
+                    url.searchParams.set('apikey', MAPY_API_KEY);
+                    url.searchParams.set('start', `${fromLoc.lng},${fromLoc.lat}`);
+                    url.searchParams.set('end', `${toLoc.lng},${toLoc.lat}`);
+                    url.searchParams.set('routeType', routeType === 'train_line' ? 'car_fast' : routeType);
+                    url.searchParams.set('format', 'geojson');
+                    url.searchParams.set('lang', 'cs');
+                    
+                    // Add timeout to prevent hanging
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    
+                    const response = await fetch(url.toString(), { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        const routeData = {
+                            geometry: data.geometry,
+                            length: data.length,
+                            duration: data.duration
+                        };
+                        
+                        displayRouteGeoJSON(data.geometry, routeType);
+                        routeCache[cacheKey] = routeData;
+                        return routeData;
+                    }
+                } catch (e) {
+                    console.warn('Mapy.cz routing failed:', e);
+                }
+            }
+            
+            // Use fallback
+            const fallback = getFallbackRoute(routeConfig);
+            if (fallback) {
+                displayRoute(fallback, routeType);
+                routeCache[cacheKey] = fallback;
+                return fallback;
+            }
+            
+            return null;
+        }
+        
+        function getFallbackRoute(routeConfig) {
+            const key = `${routeConfig.from}_${routeConfig.to}`;
+            const typeRoutes = FALLBACK_ROUTES[routeConfig.type];
+            if (typeRoutes && typeRoutes[key]) {
+                return typeRoutes[key];
+            }
+            
+            // Generic fallback - straight line
+            const fromLoc = LOCATIONS[routeConfig.from];
+            const toLoc = LOCATIONS[routeConfig.to];
+            return {
+                coords: [[fromLoc.lat, fromLoc.lng], [toLoc.lat, toLoc.lng]],
+                length: calculateDistance(fromLoc, toLoc),
+                duration: Math.round(calculateDistance(fromLoc, toLoc) / 15) // ~15m/s for car
+            };
+        }
+        
+        function displayRoute(routeData, routeType) {
+            // White border (drawn first, underneath)
+            const borderPolyline = L.polyline(routeData.coords, {
+                color: ROUTE_BORDER_COLOR,
+                weight: 8,
+                opacity: 1
+            }).addTo(map);
+            layers.push(borderPolyline);
+            
+            // Blue main line
+            const polyline = L.polyline(routeData.coords, {
+                color: ROUTE_COLOR,
+                weight: 5,
+                opacity: 1
+            }).addTo(map);
+            layers.push(polyline);
+            
+            animateRoute(routeData.coords);
+        }
+        
+        function displayRouteGeoJSON(geojson, routeType) {
+            // White border (drawn first, underneath)
+            const borderLayer = L.geoJSON(geojson, {
+                style: {
+                    color: ROUTE_BORDER_COLOR,
+                    weight: 8,
+                    opacity: 1
+                }
+            }).addTo(map);
+            layers.push(borderLayer);
+            
+            // Blue main line
+            const routeLayer = L.geoJSON(geojson, {
+                style: {
+                    color: ROUTE_COLOR,
+                    weight: 5,
+                    opacity: 1
+                }
+            }).addTo(map);
+            layers.push(routeLayer);
+            
+            // Extract coordinates for animation
+            const coords = geojson.geometry.coordinates.map(c => [c[1], c[0]]);
+            // Sample every 10th point for animation
+            const sampledCoords = coords.filter((_, i) => i % 10 === 0 || i === coords.length - 1);
+            animateRoute(sampledCoords.length > 2 ? sampledCoords : coords);
+        }
+        
+        function animateRoute(coords) {
+            if (animationTimer) clearInterval(animationTimer);
+            
+            const icon = L.divIcon({
+                className: 'animated-marker',
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            
+            const marker = L.marker(coords[0], { icon, zIndexOffset: 1000 }).addTo(map);
+            layers.push(marker);
+            
+            let idx = 0;
+            animationTimer = setInterval(() => {
+                idx = (idx + 1) % coords.length;
+                marker.setLatLng(coords[idx]);
+            }, 400);
+        }
+        
+        // Dual routes for Bohutice -> Venue
+        async function addDualRoutes() {
+            const bohutice = LOCATIONS.bohutice;
+            const venue = LOCATIONS.venue;
+            
+            // 1. Car shuttle route (blue) - using car_fast
+            try {
+                const carUrl = new URL('https://api.mapy.com/v1/routing/route');
+                carUrl.searchParams.set('apikey', MAPY_API_KEY);
+                carUrl.searchParams.set('start', `${bohutice.lng},${bohutice.lat}`);
+                carUrl.searchParams.set('end', `${venue.lng},${venue.lat}`);
+                carUrl.searchParams.set('routeType', 'car_fast');
+                carUrl.searchParams.set('format', 'geojson');
+                
+                const controller1 = new AbortController();
+                setTimeout(() => controller1.abort(), 5000);
+                const carResponse = await fetch(carUrl.toString(), { signal: controller1.signal });
+                
+                if (carResponse.ok) {
+                    const carData = await carResponse.json();
+                    // Blue route with white border
+                    const carBorder = L.geoJSON(carData.geometry, {
+                        style: { color: '#e1e2de', weight: 8, opacity: 1 }
+                    }).addTo(map);
+                    layers.push(carBorder);
+                    const carRoute = L.geoJSON(carData.geometry, {
+                        style: { color: SHUTTLE_COLOR, weight: 5, opacity: 1 }
+                    }).addTo(map);
+                    layers.push(carRoute);
+                }
+            } catch (e) {
+                // Fallback: straight line for car
+                const carFallback = L.polyline([[bohutice.lat, bohutice.lng], [venue.lat, venue.lng]], {
+                    color: SHUTTLE_COLOR, weight: 5, opacity: 0.8, dashArray: '10, 10'
+                }).addTo(map);
+                layers.push(carFallback);
+            }
+            
+            // 2. Walking route (red tourist path) - using foot_fast
+            try {
+                const walkUrl = new URL('https://api.mapy.com/v1/routing/route');
+                walkUrl.searchParams.set('apikey', MAPY_API_KEY);
+                walkUrl.searchParams.set('start', `${bohutice.lng},${bohutice.lat}`);
+                walkUrl.searchParams.set('end', `${venue.lng},${venue.lat}`);
+                walkUrl.searchParams.set('routeType', 'foot_fast');
+                walkUrl.searchParams.set('format', 'geojson');
+                
+                const controller2 = new AbortController();
+                setTimeout(() => controller2.abort(), 5000);
+                const walkResponse = await fetch(walkUrl.toString(), { signal: controller2.signal });
+                
+                if (walkResponse.ok) {
+                    const walkData = await walkResponse.json();
+                    // Red route with white border
+                    const walkBorder = L.geoJSON(walkData.geometry, {
+                        style: { color: '#e1e2de', weight: 8, opacity: 1 }
+                    }).addTo(map);
+                    layers.push(walkBorder);
+                    const walkRoute = L.geoJSON(walkData.geometry, {
+                        style: { color: WALK_COLOR, weight: 5, opacity: 1 }
+                    }).addTo(map);
+                    layers.push(walkRoute);
+                }
+            } catch (e) {
+                // Fallback: dotted red line
+                const walkFallback = L.polyline([[bohutice.lat, bohutice.lng], [venue.lat, venue.lng]], {
+                    color: WALK_COLOR, weight: 4, opacity: 0.8, dashArray: '5, 10'
+                }).addTo(map);
+                layers.push(walkFallback);
+            }
+            
+            // Add route legend markers
+            const carIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div class="marker-label" style="background: ${SHUTTLE_COLOR}; border-color: ${SHUTTLE_COLOR};">🚐 Shuttle</div>`,
+                iconSize: [100, 30],
+                iconAnchor: [50, 45]
+            });
+            const carMarker = L.marker([48.983, 16.340], { icon: carIcon }).addTo(map);
+            layers.push(carMarker);
+            
+            const walkIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div class="marker-label" style="background: ${WALK_COLOR}; border-color: ${WALK_COLOR};">🥾 Pěšky</div>`,
+                iconSize: [100, 30],
+                iconAnchor: [50, 15]
+            });
+            const walkMarker = L.marker([48.983, 16.340], { icon: walkIcon }).addTo(map);
+            layers.push(walkMarker);
+        }
+        
+        function calculateDistance(loc1, loc2) {
+            const R = 6371000; // Earth radius in meters
+            const lat1 = loc1.lat * Math.PI / 180;
+            const lat2 = loc2.lat * Math.PI / 180;
+            const dLat = (loc2.lat - loc1.lat) * Math.PI / 180;
+            const dLon = (loc2.lng - loc1.lng) * Math.PI / 180;
+            
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1) * Math.cos(lat2) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            return R * c;
+        }
+        
+        // ==============================================
+        // UI UPDATES
+        // ==============================================
+        
+        function clearLayers() {
+            if (animationTimer) {
+                clearInterval(animationTimer);
+                animationTimer = null;
+            }
+            layers.forEach(layer => {
+                if (map.hasLayer(layer)) map.removeLayer(layer);
+            });
+            layers = [];
+        }
+        
+        function showLoading(visible) {
+            const el = document.getElementById('mapLoading');
+            if (el) el.classList.toggle('visible', visible);
+        }
+        
+        function updateStepInfo(step, routeInfo) {
+            const steps = STEPS[activeTab];
+            const info = document.getElementById('stepInfo');
+            
+            let durationText = '';
+            if (routeInfo) {
+                const km = (routeInfo.length / 1000).toFixed(1);
+                const min = Math.round(routeInfo.duration / 60);
+                durationText = `<p class="step-duration">~${min} min (${km} km)</p>`;
+            }
+            
+            // Special dual route description
+            let descContent = `<p class="step-desc">${step.desc}</p>`;
+            if (step.dualRoute) {
+                descContent = `
+                    <p class="step-desc" style="margin-bottom: 8px;">
+                        <span style="color: ${SHUTTLE_COLOR}; font-weight: bold;">🚐 Kyvadlová doprava</span> – odvezeme vás autem (~5 min)
+                    </p>
+                    <p class="step-desc">
+                        <span style="color: ${WALK_COLOR}; font-weight: bold;">🥾 Pěšky po červené</span> – turistická stezka (~45 min, 3.5 km)
+                    </p>
+                `;
+            }
+            
+            info.innerHTML = `
+                <div class="step-content">
+                    <h3 class="step-title">${step.title}</h3>
+                    ${descContent}
+                    ${durationText}
+                </div>
+                <div class="step-nav">
+                    <button class="nav-btn" onclick="prevStep()" ${currentStep === 0 ? 'disabled' : ''}>←</button>
+                    <button class="nav-btn" onclick="nextStep()" ${currentStep === steps.length - 1 ? 'disabled' : ''}>→</button>
+                </div>
+            `;
+        }
+        
+        function updateLinks() {
+            const links = document.getElementById('mapLinks');
+            const { church, venue, brnoStation, bohutice } = LOCATIONS;
+            
+            if (activeTab === 'car') {
+                links.innerHTML = `
+                    <a href="https://mapy.com/fnc/v1/route?start=${church.lng},${church.lat}&end=${venue.lng},${venue.lat}&routeType=car_fast" target="_blank">
+                        📍 Navigace v Mapy.cz
+                    </a>
+                    <a href="https://www.google.com/maps/dir/${church.lat},${church.lng}/${venue.lat},${venue.lng}" target="_blank">
+                        🗺️ Google Maps
+                    </a>
+                `;
+            } else {
+                links.innerHTML = `
+                    <a href="https://idos.cz/vlakyautobusymhdvse/spojeni/vysledky/?date=19.09.2026&time=12:00&f=Brno&fc=1&t=Bohutice&tc=1&cmd=cmdSearch" target="_blank">
+                        🎫 Jízdní řády IDOS
+                    </a>
+                    <a href="https://mapy.com/fnc/v1/route?start=${brnoStation.lng},${brnoStation.lat}&end=${bohutice.lng},${bohutice.lat}" target="_blank">
+                        📍 Mapa trasy
+                    </a>
+                `;
+            }
+        }
+        
+        // ==============================================
+        // NAVIGATION
+        // ==============================================
+        
+        function prevStep() {
+            if (currentStep > 0) showStep(currentStep - 1);
+        }
+        
+        function nextStep() {
+            const steps = STEPS[activeTab];
+            if (currentStep < steps.length - 1) showStep(currentStep + 1);
+        }
+        
+        // ==============================================
+        // START
+        // ==============================================
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

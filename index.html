@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomáš & Eliška - Svatba 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/presentation.css">
+</head>
+<body>
+    <div class="container">
+        <div class="scene-container">
+            <div id="canvas-container"></div>
+            <!-- Loading indicator inside 3D scene only -->
+            <div id="sceneLoading" class="scene-loading">
+                <div class="loader"></div>
+                <p>Načítám 3D...</p>
+            </div>
+        </div>
+        <div class="content-container" id="contentContainer"></div>
+    </div>
+
+    <div class="progress-dots" id="progressDots"></div>
+
+    <script type="module" src="presentation.bundle.js"></script>
+</body>
+</html>

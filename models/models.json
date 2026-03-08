@@ -1,0 +1,24 @@
+{
+    "models": [
+        {
+            "id": "cathedral",
+            "name": "Cathedral (Exterior)",
+            "file": "cathedral.glb"
+        },
+        {
+            "id": "interior",
+            "name": "Cathedral (Interior)",
+            "file": "interior.glb"
+        },
+        {
+            "id": "manzele",
+            "name": "Couple (Manželé)",
+            "file": "manzele.glb"
+        },
+        {
+            "id": "svatebcani",
+            "name": "Wedding Guests (Svatebčané)",
+            "file": "svatebcani simple.glb"
+        }
+    ]
+}
