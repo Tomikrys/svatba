@@ -1,0 +1,352 @@
+{
+  "scenes": [
+    {
+      "name": "in front",
+      "timestamp": 1772875435487,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": 0.105, "y": -0.236, "z": 3.24 },
+        "target": { "x": 0.13, "y": -0.197, "z": -0.11 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.5
+      }
+    },
+    {
+      "name": "detail",
+      "timestamp": 1772875468749,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": 0.009, "y": -0.9, "z": 1.23 },
+        "target": { "x": -0.021, "y": -0.614, "z": -0.056 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.05
+      }
+    },
+    {
+      "name": "inside",
+      "timestamp": 1772875490383,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": 0.011, "y": -0.839, "z": 0.356 },
+        "target": { "x": 0.001, "y": -0.74, "z": -0.085 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.02
+      }
+    },
+    {
+      "name": "inside lightning",
+      "timestamp": 1772875610475,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": 0.028, "y": -0.819, "z": 0.351 },
+        "target": { "x": 0.001, "y": -0.74, "z": -0.085 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.02
+      }
+    },
+    {
+      "name": "up",
+      "timestamp": 1772886543179,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": -0.053, "y": 0.574, "z": 1.097 },
+        "target": { "x": -0.013, "y": -0.346, "z": 0.374 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.08
+      }
+    },
+    {
+      "name": "mapa",
+      "timestamp": 1772887602211,
+      "objects": [
+        {
+          "id": 1,
+          "modelId": "cathedral",
+          "position": { "x": 0, "y": 0, "z": 0 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 1
+        },
+        {
+          "id": 2,
+          "modelId": "manzele",
+          "position": { "x": 0, "y": -0.88, "z": 0.76 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.1
+        },
+        {
+          "id": 3,
+          "modelId": "interior",
+          "position": { "x": 0, "y": -0.6, "z": 0.1 },
+          "rotation": { "x": 0, "y": 0, "z": 0 },
+          "scale": 0.3
+        }
+      ],
+      "camera": {
+        "position": { "x": -0.432, "y": -0.371, "z": 2.326 },
+        "target": { "x": -0.057, "y": -0.243, "z": 0.25 },
+        "type": "perspective",
+        "fov": 49,
+        "zoom": 50
+      },
+      "settings": {
+        "filter": "bayer",
+        "filterIntensity": 1,
+        "colorNum": 8,
+        "bayerThreshold": 0.33,
+        "bayerSaturation": 0.8,
+        "bias": 0.07,
+        "cameraType": "perspective",
+        "fov": 49,
+        "zoom": 50,
+        "autoRotate": false,
+        "rotateSpeed": 1,
+        "ambientIntensity": 3,
+        "directionalIntensity": 5,
+        "fillLightIntensity": 2,
+        "hemiLightIntensity": 2,
+        "exposure": 3,
+        "bgColor": "#1a1a2e",
+        "duotoneEnabled": true,
+        "duotoneDarkColor": "#000000",
+        "duotoneIntensity": 0.18,
+        "duotoneLightColor": "#ff9500",
+        "wiggleAmount": 0.7
+      }
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+    "wedding": {
+        "groomName": "Tomáš",
+        "brideName": "Eliška",
+        "date": "19. září 2026",
+        "dateISO": "2026-09-19"
+    },
+    "sections": {
+        "in front": {
+            "type": "announcement",
+            "title": null,
+            "content": {
+                "groomName": "Tomáš",
+                "brideName": "Eliška",
+                "subtitle": "Zveme vás na naši svatbu",
+                "date": "19. září 2026"
+            }
+        },
+        "detail": {
+            "type": "location",
+            "title": "Místo konání",
+            "content": {
+                "venueName": "Červený kostel",
+                "address": "Komenského náměstí\n602 00 Brno",
+                "time": "12:00"
+            }
+        },
+        "inside": {
+            "type": "form",
+            "title": "Potvrďte účast",
+            "content": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "label": "Jméno a příjmení",
+                        "type": "text",
+                        "required": true,
+                        "placeholder": "Vaše jméno"
+                    },
+                    {
+                        "name": "email",
+                        "label": "E-mail",
+                        "type": "email",
+                        "required": true,
+                        "placeholder": "vas@email.cz"
+                    },
+                    {
+                        "name": "guests",
+                        "label": "Počet osob",
+                        "type": "select",
+                        "options": [
+                            { "value": "1", "label": "1 osoba" },
+                            { "value": "2", "label": "2 osoby" },
+                            { "value": "3", "label": "3 osoby" },
+                            { "value": "4", "label": "4 osoby" }
+                        ]
+                    },
+                    {
+                        "name": "note",
+                        "label": "Poznámka",
+                        "type": "textarea",
+                        "rows": 3,
+                        "placeholder": "Dietní omezení, přání..."
+                    }
+                ],
+                "submitButton": "Odeslat"
+            }
+        },
+        "inside lightning": {
+            "type": "info",
+            "title": "Svatební hostina",
+            "content": {
+                "text": "Po obřadu vás zveme na oslavu"
+            }
+        },
+        "up": {
+            "type": "closing",
+            "title": "Těšíme se na vás",
+            "content": {
+                "signature": "S láskou, Tomáš & Eliška"
+            }
+        },
+        "mapa": {
+            "type": "map",
+            "title": "Jak se k nám dostanete",
+            "content": {
+                "iframeSrc": "map.html"
+            }
+        }
+    },
+    "locations": {
+        "church": {
+            "name": "Červený kostel",
+            "address": "Komenského náměstí, Brno",
+            "lat": 49.19754653975549,
+            "lng": 16.6032530901071
+        },
+        "venue": {
+            "name": "Veselka",
+            "address": "Miroslavské Knínice 186",
+            "lat": 48.97776495038363,
+            "lng": 16.318344138294613
+        },
+        "parking": {
+            "name": "Parkování",
+            "address": "U areálu Veselky",
+            "lat": 48.978072810130165,
+            "lng": 16.317876533259835
+        },
+        "brnoStation": {
+            "name": "Brno hl. n.",
+            "address": "Nádražní 1, Brno",
+            "lat": 49.18958491634403,
+            "lng": 16.609942201386144
+        },
+        "bohutice": {
+            "name": "Bohutice",
+            "address": "Vlaková stanice",
+            "lat": 48.98790034464077,
+            "lng": 16.355912488657392
+        }
+    }
+}
