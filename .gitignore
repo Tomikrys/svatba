@@ -6,6 +6,9 @@ dist/
 gh-pages/
 deploy/
 
+# Large uncompressed models (too big for GitHub)
+models/uncompressed/
+
 # OS files
 .DS_Store
 *.DS_Store
