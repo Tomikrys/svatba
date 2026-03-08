@@ -1,0 +1,456 @@
+/* Presentation Page Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Cormorant Garamond', serif;
+    background: #1a1a2e;
+    color: #f5f0e8;
+    overflow-x: hidden;
+}
+
+/* Layout - Desktop */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Left side - 3D Scene (Fixed) */
+.scene-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 50vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+#canvas-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Right side - Content (Scrollable) */
+.content-container {
+    margin-left: 50vw;
+    width: 50vw;
+    min-height: 100vh;
+}
+
+/* Content Sections */
+.section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+    position: relative;
+}
+
+/* Section 1 - Announcement */
+.section-announcement {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+}
+
+.section-announcement .ornament {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c9a050, transparent);
+    margin: 30px auto;
+}
+
+.section-announcement h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f0e8 0%, #c9a050 50%, #f5f0e8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-announcement .ampersand {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #c9a050;
+    margin: 20px 0;
+}
+
+.section-announcement .subtitle {
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: rgba(245, 240, 232, 0.7);
+    margin-top: 40px;
+}
+
+.section-announcement .date {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #c9a050;
+    margin-top: 20px;
+    letter-spacing: 0.2em;
+}
+
+/* Section 2 - Location */
+.section-location {
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+}
+
+.section-location h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    color: #c9a050;
+}
+
+.location-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 160, 80, 0.3);
+    border-radius: 8px;
+    padding: 40px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.location-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #f5f0e8;
+}
+
+.location-card p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: rgba(245, 240, 232, 0.8);
+}
+
+.location-card .time {
+    font-size: 1.5rem;
+    color: #c9a050;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+/* Section 3 - Form */
+.section-form {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+}
+
+.section-form h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    color: #c9a050;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 160, 80, 0.3);
+    border-radius: 8px;
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: rgba(245, 240, 232, 0.7);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(201, 160, 80, 0.3);
+    border-radius: 4px;
+    color: #f5f0e8;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #c9a050;
+}
+
+.form-group select option {
+    background: #1a1a2e;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #c9a050, #d4b366);
+    border: none;
+    border-radius: 4px;
+    color: #1a1a2e;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(201, 160, 80, 0.3);
+}
+
+/* Section 4 - Blank/Thank you */
+.section-blank {
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+}
+
+.section-blank h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    color: #c9a050;
+    text-align: center;
+}
+
+.section-blank p {
+    font-size: 1.3rem;
+    color: rgba(245, 240, 232, 0.7);
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Progress indicator */
+.progress-dots {
+    position: fixed;
+    right: calc(50vw + 30px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.progress-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(201, 160, 80, 0.3);
+    border: 1px solid rgba(201, 160, 80, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.progress-dot.active {
+    background: #c9a050;
+    transform: scale(1.3);
+}
+
+.progress-dot:hover {
+    background: rgba(201, 160, 80, 0.6);
+}
+
+/* Loading screen */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+#loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(201, 160, 80, 0.3);
+    border-top-color: #c9a050;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile Layout */
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+    }
+
+    /* On mobile: 3D scene fixed at bottom */
+    .scene-container {
+        position: fixed;
+        left: 0;
+        top: auto;
+        bottom: 0;
+        width: 100vw;
+        height: 40vh;
+        z-index: 10;
+    }
+
+    /* Content scrolls above the scene */
+    .content-container {
+        margin-left: 0;
+        width: 100vw;
+        padding-bottom: 40vh;
+    }
+
+    .section {
+        min-height: 70vh;
+        padding: 40px 30px;
+    }
+
+    .progress-dots {
+        position: fixed;
+        right: 15px;
+        top: 50%;
+        bottom: auto;
+        transform: translateY(-50%);
+        flex-direction: column;
+        z-index: 100;
+    }
+
+    .section-announcement h1 {
+        font-size: 2.2rem;
+        letter-spacing: 0.15em;
+    }
+
+    .section-announcement .ampersand {
+        font-size: 2rem;
+    }
+
+    .section-announcement .date {
+        font-size: 1.8rem;
+    }
+
+    .section-location h2,
+    .section-form h2 {
+        font-size: 1.8rem;
+    }
+
+    .location-card,
+    .form-container {
+        padding: 30px 20px;
+    }
+}
+
+/* Map Section - fills viewport */
+.section-map {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    padding: 0;
+    background: #1a1a2e;
+    min-height: 100vh;
+}
+
+.section-map h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: #c9a050;
+}
+
+.section-map .location-card {
+    margin-bottom: 30px;
+}
+
+/* Iframe container fills the section */
+.map-iframe-container {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.map-iframe-container iframe {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border: none;
+}
+
+.map-container {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    /* CSS grayscale filter to match dither aesthetic */
+    filter: grayscale(100%) contrast(1.2);
+    border: 2px solid rgba(245, 240, 232, 0.3);
+}
+
+/* Fallback map styling when SMap is loaded */
+.map-container > div {
+    width: 100%;
+    height: 100%;
+}
+
+/* Section Up */
+.section-up {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+}
+
+.section-up h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    color: #c9a050;
+    text-align: center;
+}
+
+.section-up p {
+    font-size: 1.3rem;
+    color: rgba(245, 240, 232, 0.7);
+    margin-top: 20px;
+    text-align: center;
+}

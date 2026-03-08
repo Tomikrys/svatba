@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Area Editor - Svatba</title>
+    
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #e8e4dc;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: #14141f;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(201, 169, 89, 0.3);
+        }
+        
+        h1 {
+            color: #c9a959;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        
+        h2 {
+            color: #c9a959;
+            font-size: 1rem;
+            margin: 20px 0 10px;
+            font-weight: 400;
+            border-bottom: 1px solid rgba(201, 169, 89, 0.3);
+            padding-bottom: 5px;
+        }
+        
+        .instructions {
+            background: rgba(201, 169, 89, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        .instructions strong {
+            color: #c9a959;
+        }
+        
+        /* Controls */
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(201, 169, 89, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        
+        input[type="color"] {
+            width: 60px;
+            height: 35px;
+            padding: 2px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(201, 169, 89, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .color-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .color-row span {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .btn-primary {
+            background: #c9a959;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #dbb963;
+        }
+        
+        .btn-secondary {
+            background: rgba(201, 169, 89, 0.2);
+            color: #c9a959;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(201, 169, 89, 0.3);
+        }
+        
+        .btn-danger {
+            background: rgba(229, 57, 53, 0.2);
+            color: #e53935;
+            border: 1px solid rgba(229, 57, 53, 0.3);
+        }
+        .btn-danger:hover {
+            background: rgba(229, 57, 53, 0.3);
+        }
+        
+        /* Points list */
+        .points-list {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .point-item {
+            padding: 4px 8px;
+            margin: 2px 0;
+            background: rgba(201, 169, 89, 0.1);
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .point-item .coords {
+            color: #c9a959;
+        }
+        
+        .point-item button {
+            background: rgba(229, 57, 53, 0.3);
+            border: none;
+            color: #e53935;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        
+        /* Output */
+        .output {
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(201, 169, 89, 0.2);
+        }
+        
+        /* Current areas display */
+        .current-areas {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .area-item {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .area-item.parking {
+            background: rgba(229, 57, 53, 0.2);
+            border-left: 4px solid #e53935;
+        }
+        
+        .area-item.tents {
+            background: rgba(3, 169, 244, 0.2);
+            border-left: 4px solid #03a9f4;
+        }
+        
+        /* Map container */
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Coordinate display */
+        .coord-display {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(20, 20, 35, 0.95);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            z-index: 1000;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+        }
+        
+        .coord-display .lat { color: #4CAF50; }
+        .coord-display .lng { color: #2196F3; }
+        
+        /* Drawing mode indicator */
+        .drawing-mode {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(201, 169, 89, 0.9);
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .drawing-mode.active {
+            display: block;
+        }
+        
+        /* Layer buttons */
+        .map-layers {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .layer-btn {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid rgba(201,169,89,0.3);
+            color: #888;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .layer-btn:hover {
+            color: #c9a959;
+            background: rgba(201,169,89,0.2);
+        }
+        
+        .layer-btn.active {
+            color: #c9a959;
+            background: rgba(201,169,89,0.3);
+            border-color: #c9a959;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>🗺️ Map Area Editor</h1>
+        
+        <div class="instructions">
+            <strong>Instructions:</strong><br>
+            1. Click "Start Drawing" to begin<br>
+            2. Click on the map to add points<br>
+            3. Points form a polygon shape<br>
+            4. Click "Finish Drawing" when done<br>
+            5. Click "Export Code" to get the JavaScript
+        </div>
+        
+        <h2>📍 Current Areas</h2>
+        <div class="current-areas">
+            <div class="area-item parking">
+                <span>🅿️ Parking (red)</span>
+                <span>4 points</span>
+            </div>
+            <div class="area-item tents">
+                <span>⛺ Stany (blue)</span>
+                <span>4 points</span>
+            </div>
+        </div>
+        
+        <h2>✏️ Draw New Area</h2>
+        
+        <div class="control-group">
+            <label>Area Name</label>
+            <input type="text" id="areaName" placeholder="e.g., parking, tents, custom" value="newArea">
+        </div>
+        
+        <div class="control-group">
+            <label>Color</label>
+            <div class="color-row">
+                <input type="color" id="areaColor" value="#e53935">
+                <span id="colorPreview">#e53935</span>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn btn-primary" id="startDrawing">🎯 Start Drawing</button>
+            <button class="btn btn-secondary" id="finishDrawing" disabled>✅ Finish</button>
+            <button class="btn btn-danger" id="clearPoints">🗑️ Clear</button>
+        </div>
+        
+        <h2>📌 Points (<span id="pointCount">0</span>)</h2>
+        <div class="points-list" id="pointsList">
+            <em style="color: #666;">Click on the map to add points...</em>
+        </div>
+        
+        <div class="control-group">
+            <button class="btn btn-secondary" id="undoPoint" disabled>↩️ Undo Last</button>
+        </div>
+        
+        <h2>📤 Export</h2>
+        <div class="control-group">
+            <button class="btn btn-primary" id="exportCode">📋 Export Code</button>
+            <button class="btn btn-secondary" id="exportAll">📋 Export All Areas</button>
+        </div>
+        
+        <div class="output" id="output">
+// Click "Export Code" to generate JavaScript code
+// for your custom polygon area
+        </div>
+    </div>
+    
+    <div class="map-container">
+        <div class="drawing-mode" id="drawingMode">🎯 DRAWING MODE - Click to add points</div>
+        
+        <div class="map-layers">
+            <button class="layer-btn active" data-layer="basic">🗺️ Mapa</button>
+            <button class="layer-btn" data-layer="aerial">🛰️ Satelit</button>
+        </div>
+        
+        <div id="map"></div>
+        
+        <div class="coord-display">
+            Cursor: <span class="lat" id="cursorLat">--</span>, <span class="lng" id="cursorLng">--</span>
+        </div>
+    </div>
+    
+    <script>
+        // ==============================================
+        // CURRENT CONFIGURATION (from map.html)
+        // ==============================================
+        
+        const MAPY_API_KEY = '1uZ3W2Yf7_7f0tnlYW_un5_v8A7Z6Q3mb84iqIWSzFk';
+        
+        // Saved areas (start empty - user will draw new ones)
+        let savedAreas = {};
+        
+        // Venue center for initial view
+        const VENUE_CENTER = [48.9782, 16.3180];
+        
+        // ==============================================
+        // STATE
+        // ==============================================
+        
+        let map = null;
+        let tileLayer = null;
+        let activeLayer = 'basic';
+        let isDrawing = false;
+        let currentPoints = [];
+        let drawingMarkers = [];
+        let drawingPolygon = null;
+        let savedPolygons = [];
+        let areaCounter = 1;
+        
+        // ==============================================
+        // INITIALIZATION
+        // ==============================================
+        
+        function init() {
+            // Create map
+            map = L.map('map', {
+                center: VENUE_CENTER,
+                zoom: 18,
+                zoomControl: true
+            });
+            
+            // Set initial tile layer (aerial for better precision)
+            setTileLayer('aerial');
+            
+            // Setup event listeners
+            setupMapEvents();
+            setupUIEvents();
+            
+            // Update saved areas display
+            updateSavedAreasDisplay();
+        }
+        
+        function setTileLayer(layerName) {
+            if (tileLayer) {
+                map.removeLayer(tileLayer);
+            }
+            
+            activeLayer = layerName;
+            
+            tileLayer = L.tileLayer(
+                `https://api.mapy.com/v1/maptiles/${layerName}/256/{z}/{x}/{y}?apikey=${MAPY_API_KEY}`,
+                {
+                    attribution: '&copy; Seznam.cz a.s.',
+                    maxZoom: 20
+                }
+            ).addTo(map);
+            
+            // Update button states
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.layer === layerName);
+            });
+        }
+        
+        function drawSavedArea(name, area) {
+            const polygon = L.polygon(area.coords, {
+                color: area.color,
+                fillColor: area.fillColor,
+                fillOpacity: 0.4,
+                weight: 3
+            }).addTo(map);
+            
+            // Add label
+            const center = polygon.getBounds().getCenter();
+            const label = L.divIcon({
+                className: 'area-label',
+                html: `<div style="background: ${area.color}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">${name}</div>`,
+                iconSize: [80, 20],
+                iconAnchor: [40, 10]
+            });
+            const labelMarker = L.marker(center, { icon: label }).addTo(map);
+            
+            savedPolygons.push({ polygon, labelMarker, name });
+        }
+        
+        function updateSavedAreasDisplay() {
+            const container = document.querySelector('.current-areas');
+            const areaEntries = Object.entries(savedAreas);
+            
+            if (areaEntries.length === 0) {
+                container.innerHTML = '<em style="color: #666; padding: 10px; display: block;">No areas yet. Draw your first area!</em>';
+                return;
+            }
+            
+            container.innerHTML = areaEntries.map(([name, area]) => `
+                <div class="area-item" style="background: ${area.color}22; border-left: 4px solid ${area.color};">
+                    <span style="color: ${area.color};">● ${name}</span>
+                    <div>
+                        <span>${area.coords.length} pts</span>
+                        <button onclick="deleteArea('${name}')" style="background: none; border: none; color: #e53935; cursor: pointer; margin-left: 8px;">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function deleteArea(name) {
+            // Remove from saved areas
+            delete savedAreas[name];
+            
+            // Remove from map
+            const idx = savedPolygons.findIndex(p => p.name === name);
+            if (idx >= 0) {
+                const item = savedPolygons[idx];
+                map.removeLayer(item.polygon);
+                map.removeLayer(item.labelMarker);
+                savedPolygons.splice(idx, 1);
+            }
+            
+            updateSavedAreasDisplay();
+        }
+        
+        // Make deleteArea global
+        window.deleteArea = deleteArea;
+        
+        // ==============================================
+        // MAP EVENTS
+        // ==============================================
+        
+        function setupMapEvents() {
+            // Update cursor coordinates
+            map.on('mousemove', (e) => {
+                document.getElementById('cursorLat').textContent = e.latlng.lat.toFixed(6);
+                document.getElementById('cursorLng').textContent = e.latlng.lng.toFixed(6);
+            });
+            
+            // Handle clicks when drawing
+            map.on('click', (e) => {
+                if (!isDrawing) return;
+                
+                const point = [e.latlng.lat, e.latlng.lng];
+                addPoint(point);
+            });
+        }
+        
+        // ==============================================
+        // UI EVENTS
+        // ==============================================
+        
+        function setupUIEvents() {
+            // Layer buttons
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTileLayer(btn.dataset.layer);
+                });
+            });
+            
+            // Color picker
+            document.getElementById('areaColor').addEventListener('input', (e) => {
+                document.getElementById('colorPreview').textContent = e.target.value;
+            });
+            
+            // Start drawing
+            document.getElementById('startDrawing').addEventListener('click', startDrawing);
+            
+            // Finish drawing
+            document.getElementById('finishDrawing').addEventListener('click', finishDrawing);
+            
+            // Clear points
+            document.getElementById('clearPoints').addEventListener('click', clearPoints);
+            
+            // Undo last point
+            document.getElementById('undoPoint').addEventListener('click', undoLastPoint);
+            
+            // Export code
+            document.getElementById('exportCode').addEventListener('click', exportCode);
+            
+            // Export all areas
+            document.getElementById('exportAll').addEventListener('click', exportAllAreas);
+        }
+        
+        // ==============================================
+        // DRAWING FUNCTIONS
+        // ==============================================
+        
+        function startDrawing() {
+            isDrawing = true;
+            document.getElementById('drawingMode').classList.add('active');
+            document.getElementById('startDrawing').disabled = true;
+            document.getElementById('finishDrawing').disabled = false;
+            map.getContainer().style.cursor = 'crosshair';
+        }
+        
+        function finishDrawing() {
+            isDrawing = false;
+            document.getElementById('drawingMode').classList.remove('active');
+            document.getElementById('startDrawing').disabled = false;
+            document.getElementById('finishDrawing').disabled = true;
+            map.getContainer().style.cursor = '';
+            
+            // Save the current area if valid
+            if (currentPoints.length >= 3) {
+                const name = document.getElementById('areaName').value || `area${areaCounter}`;
+                const color = document.getElementById('areaColor').value;
+                
+                // Save to savedAreas
+                savedAreas[name] = {
+                    color: color,
+                    fillColor: color,
+                    coords: currentPoints.map(p => [parseFloat(p[0].toFixed(6)), parseFloat(p[1].toFixed(6))])
+                };
+                
+                // Draw the permanent polygon
+                drawSavedArea(name, savedAreas[name]);
+                
+                // Clear drawing state
+                drawingMarkers.forEach(m => map.removeLayer(m));
+                drawingMarkers = [];
+                if (drawingPolygon) {
+                    map.removeLayer(drawingPolygon);
+                    drawingPolygon = null;
+                }
+                currentPoints = [];
+                
+                // Update UI
+                updateSavedAreasDisplay();
+                updatePointsList();
+                
+                // Increment counter and prepare next area name
+                areaCounter++;
+                document.getElementById('areaName').value = `area${areaCounter}`;
+                
+                // Change color for variety
+                const colors = ['#e53935', '#03a9f4', '#4CAF50', '#FF9800', '#9C27B0', '#00BCD4'];
+                document.getElementById('areaColor').value = colors[areaCounter % colors.length];
+                document.getElementById('colorPreview').textContent = colors[areaCounter % colors.length];
+            }
+        }
+        
+        function addPoint(point) {
+            currentPoints.push(point);
+            
+            // Add marker
+            const color = document.getElementById('areaColor').value;
+            const marker = L.circleMarker(point, {
+                radius: 8,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map);
+            
+            // Add number label
+            marker.bindTooltip(String(currentPoints.length), {
+                permanent: true,
+                direction: 'center',
+                className: 'point-number'
+            });
+            
+            drawingMarkers.push(marker);
+            
+            // Update polygon
+            updateDrawingPolygon();
+            
+            // Update UI
+            updatePointsList();
+            document.getElementById('undoPoint').disabled = false;
+        }
+        
+        function updateDrawingPolygon() {
+            if (drawingPolygon) {
+                map.removeLayer(drawingPolygon);
+            }
+            
+            if (currentPoints.length >= 2) {
+                const color = document.getElementById('areaColor').value;
+                drawingPolygon = L.polygon(currentPoints, {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.3,
+                    weight: 3,
+                    dashArray: isDrawing ? '5, 10' : null
+                }).addTo(map);
+            }
+        }
+        
+        function undoLastPoint() {
+            if (currentPoints.length > 0) {
+                currentPoints.pop();
+                const marker = drawingMarkers.pop();
+                if (marker) map.removeLayer(marker);
+                updateDrawingPolygon();
+                updatePointsList();
+                
+                if (currentPoints.length === 0) {
+                    document.getElementById('undoPoint').disabled = true;
+                }
+            }
+        }
+        
+        function clearPoints() {
+            currentPoints = [];
+            drawingMarkers.forEach(m => map.removeLayer(m));
+            drawingMarkers = [];
+            if (drawingPolygon) {
+                map.removeLayer(drawingPolygon);
+                drawingPolygon = null;
+            }
+            updatePointsList();
+            document.getElementById('undoPoint').disabled = true;
+        }
+        
+        function updatePointsList() {
+            const container = document.getElementById('pointsList');
+            document.getElementById('pointCount').textContent = currentPoints.length;
+            
+            if (currentPoints.length === 0) {
+                container.innerHTML = '<em style="color: #666;">Click on the map to add points...</em>';
+                return;
+            }
+            
+            container.innerHTML = currentPoints.map((p, i) => `
+                <div class="point-item">
+                    <span>${i + 1}.</span>
+                    <span class="coords">[${p[0].toFixed(6)}, ${p[1].toFixed(6)}]</span>
+                    <button onclick="removePoint(${i})">×</button>
+                </div>
+            `).join('');
+        }
+        
+        function removePoint(index) {
+            currentPoints.splice(index, 1);
+            const marker = drawingMarkers.splice(index, 1)[0];
+            if (marker) map.removeLayer(marker);
+            
+            // Update remaining markers' labels
+            drawingMarkers.forEach((m, i) => {
+                m.unbindTooltip();
+                m.bindTooltip(String(i + 1), {
+                    permanent: true,
+                    direction: 'center',
+                    className: 'point-number'
+                });
+            });
+            
+            updateDrawingPolygon();
+            updatePointsList();
+        }
+        
+        // ==============================================
+        // EXPORT FUNCTIONS
+        // ==============================================
+        
+        function exportCode() {
+            // Export all saved areas (same as exportAllAreas)
+            exportAllAreas();
+        }
+        
+        function exportAllAreas() {
+            const areaEntries = Object.entries(savedAreas);
+            
+            if (areaEntries.length === 0) {
+                document.getElementById('output').textContent = '// No areas to export. Draw some areas first!';
+                return;
+            }
+            
+            let code = `        // Highlight areas (polygons)\n        const AREAS = {\n`;
+            
+            areaEntries.forEach(([name, area], index, arr) => {
+                const coordsStr = area.coords.map(p => 
+                    `                    [${p[0]}, ${p[1]}]`
+                ).join(',\n');
+                
+                code += `            ${name}: {
+                color: '${area.color}',
+                fillColor: '${area.fillColor}',
+                coords: [
+${coordsStr}
+                ]
+            }${index < arr.length - 1 ? ',' : ''}\n`;
+            });
+            
+            code += `        };`;
+            
+            document.getElementById('output').textContent = code;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(code).then(() => {
+                alert('All areas code copied to clipboard!');
+            });
+        }
+        
+        // Make removePoint global
+        window.removePoint = removePoint;
+        
+        // ==============================================
+        // START
+        // ==============================================
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

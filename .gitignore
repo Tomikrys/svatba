@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build outputs (gh-pages has its own branch)
+dist/
+gh-pages/
+deploy/
+
+# OS files
+.DS_Store
+*.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Temp files
+*.log
+*.tmp
+
+# Zip files
+*.zip
