@@ -1,0 +1,32 @@
+{
+  "sections": {
+    "in front": {
+      "type": "announcement",
+      "content": "<h1>Tomáš</h1><div class=\"ampersand\">&</div><h1>Eliška</h1><div class=\"ornament\"></div><p class=\"subtitle\">Zveme vás na naši svatbu</p><p class=\"date\">19. září 2026</p>"
+    },
+    "detail": {
+      "type": "location",
+      "content": "<h2>Místo konání</h2><div class=\"location-card\"><h3>Červený kostel</h3><p>Komenského náměstí<br>602 00 Brno</p><p class=\"time\">12:00</p></div>"
+    },
+    "inside": {
+      "type": "form",
+      "content": "<h2>Potvrďte účast</h2><div class=\"form-container\"><form id=\"rsvpForm\"><div class=\"form-group\"><label>Jméno a příjmení</label><input type=\"text\" name=\"name\" required placeholder=\"Vaše jméno\"></div><div class=\"form-group\"><label>E-mail</label><input type=\"email\" name=\"email\" required placeholder=\"vas@email.cz\"></div><div class=\"form-group\"><label>Počet osob</label><select name=\"guests\"><option value=\"1\">1 osoba</option><option value=\"2\">2 osoby</option><option value=\"3\">3 osoby</option><option value=\"4\">4 osoby</option></select></div><div class=\"form-group\"><label>Poznámka</label><textarea name=\"note\" rows=\"3\" placeholder=\"Dietní omezení, přání...\"></textarea></div><button type=\"submit\" class=\"submit-btn\">Odeslat</button></form></div>"
+    },
+    "inside lightning": {
+      "type": "blank",
+      "content": "<h2>Svatební hostina</h2><p>Po obřadu vás zveme na oslavu</p>"
+    },
+    "up": {
+      "type": "up",
+      "content": "<h2>Těšíme se na vás</h2><p>S láskou, Tomáš & Eliška</p>"
+    },
+    "mapa": {
+      "type": "map",
+      "content": "<div class=\"map-iframe-container\" style=\"width: 100%; height: 100%; display: flex; flex-direction: column; padding: 0;\"><iframe id=\"mapIframe\" src=\"map.html\" frameborder=\"0\" style=\"width: 100%; flex: 1; min-height: 0; border: none; border-radius: 0;\"></iframe></div>"
+    }
+  },
+  "default": {
+    "type": "blank",
+    "content": "<h2>Scene</h2><p></p>"
+  }
+}

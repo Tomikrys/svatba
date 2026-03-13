@@ -73,59 +73,62 @@
         }
         .tab-emoji { margin-right: 8px; }
         
-        /* Map body layout */
+        /* Map body layout - Remove flex since pager is now horizontal */
         .map-body {
-            display: flex;
+            display: block;
         }
         
-        /* Vertical pager */
+        /* Horizontal pager - More visible navigation */
         .pager {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            padding: 20px 15px;
-            background: rgba(0,0,0,0.2);
-            border-right: 1px solid rgba(201,169,89,0.2);
+            gap: 16px;
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(201,169,89,0.2);
         }
         .pager-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(201, 169, 89, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: rgba(201, 169, 89, 0.1);
+            border: 2px solid rgba(201, 169, 89, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .pager-dot::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(201, 169, 89, 0.4);
+            transition: all 0.3s ease;
         }
         .pager-dot:hover {
-            background: rgba(201, 169, 89, 0.6);
-            transform: scale(1.1);
+            background: rgba(201, 169, 89, 0.2);
+            border-color: #c9a959;
+            color: #c9a959;
+            transform: translateY(-2px);
+        }
+        .pager-dot:hover::before {
+            background: #c9a959;
         }
         .pager-dot.active {
-            background: #c9a959;
-            box-shadow: 0 0 10px rgba(201, 169, 89, 0.6);
-        }
-        .pager-dot::after {
-            content: attr(data-label);
-            position: absolute;
-            left: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(20, 20, 35, 0.98);
+            background: rgba(201, 169, 89, 0.3);
+            border-color: #c9a959;
             color: #c9a959;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            border: 1px solid rgba(201, 169, 89, 0.3);
-            z-index: 100;
+            box-shadow: 0 0 15px rgba(201, 169, 89, 0.4);
         }
-        .pager-dot:hover::after {
-            opacity: 1;
+        .pager-dot.active::before {
+            background: #c9a959;
+            box-shadow: 0 0 8px rgba(201, 169, 89, 0.8);
         }
         
         /* Main map area */
@@ -186,60 +189,99 @@
             display: block;
         }
         
-        /* Step info */
+        /* Step info - Fixed height, elegant design */
         .step-info {
-            padding: 16px 20px;
-            background: rgba(0,0,0,0.2);
+            min-height: 140px;
+            max-height: 140px;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, rgba(201,169,89,0.12) 0%, rgba(201,169,89,0.05) 100%);
+            border-bottom: 2px solid rgba(201,169,89,0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #c9a959 0%, rgba(201,169,89,0.3) 100%);
         }
         .step-content {
             flex: 1;
+            min-width: 0;
+            padding-left: 12px;
         }
         .step-title {
             color: #c9a959;
-            font-size: 1.1rem;
-            margin: 0 0 4px 0;
-            font-weight: 400;
+            font-size: 1.3rem;
+            margin: 0 0 8px 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         .step-desc {
-            color: #aaa;
-            font-size: 0.85rem;
+            color: #bbb;
+            font-size: 0.95rem;
             margin: 0;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .step-duration {
             color: #c9a959;
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-top: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .step-duration::before {
+            content: '⏱️';
+            font-size: 1.1rem;
         }
         
-        /* Navigation buttons */
+        /* Navigation buttons - More prominent */
         .step-nav {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
         .nav-btn {
             background: rgba(201,169,89,0.2);
-            border: 1px solid rgba(201,169,89,0.3);
+            border: 2px solid rgba(201,169,89,0.4);
             color: #c9a959;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            padding: 12px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+            font-weight: 500;
         }
         .nav-btn:hover:not(:disabled) {
-            background: rgba(201,169,89,0.3);
+            background: rgba(201,169,89,0.35);
+            border-color: #c9a959;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 169, 89, 0.3);
         }
         .nav-btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
+        }
+        .nav-btn .arrow {
+            font-size: 1.2rem;
         }
         
         /* Links */
@@ -312,7 +354,49 @@
             0%, 100% { box-shadow: 0 0 15px rgba(72,101,223,0.8); }
             50% { box-shadow: 0 0 25px rgba(72,101,223,1); }
         }
-    </style>
+
+        /* Mobile responsive design */
+        @media (max-width: 768px) {
+            .pager {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 12px;
+            }
+            .pager-dot {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            .step-info {
+                min-height: 160px;
+                max-height: 160px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px 20px;
+            }
+            .step-title {
+                font-size: 1.1rem;
+            }
+            .step-desc {
+                font-size: 0.85rem;
+            }
+            .step-duration {
+                font-size: 0.9rem;
+            }
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            .step-nav {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-btn {
+                flex: 1;
+            }
+        }
+
+</style>
 </head>
 <body>
     <div class="container">
@@ -336,18 +420,25 @@
                 
                 <!-- Main area -->
                 <div class="map-main">
+                    <!-- Step info at top - Fixed height -->
+                    <div class="step-info" id="stepInfo">
+                        <!-- Filled by JS -->
+                    </div>
+
                     <!-- Layer selector -->
                     <div class="map-layers">
                         <button class="layer-btn active" data-layer="outdoor">🥾 Turistická</button>
                         <button class="layer-btn" data-layer="aerial">🛰️ Satelit</button>
+                        <button class="layer-btn" data-layer="voyager">🗺️ Voyager</button>
+                        <button class="layer-btn" data-layer="light">☀️ Světlá</button>
+                        <button class="layer-btn" data-layer="dark">🌙 Tmavá</button>
+                        <button class="layer-btn" data-layer="toner">⚫ Toner</button>
+                        <button class="layer-btn" data-layer="cyclosm">🚴 CyclOSM</button>
+                        <button class="layer-btn" data-layer="humanitarian">🌍 HOT</button>
                     </div>
-                    
+
                     <div id="map" style="position: relative;">
                         <div class="map-loading" id="mapLoading">Načítám trasu...</div>
-                    </div>
-                    
-                    <div class="step-info" id="stepInfo">
-                        <!-- Filled by JS -->
                     </div>
                 </div>
             </div>
@@ -366,9 +457,11 @@
         
         // Mapy.cz API key
         const MAPY_API_KEY = '1uZ3W2Yf7_7f0tnlYW_un5_v8A7Z6Q3mb84iqIWSzFk';
-        
-        // Use Mapy.cz tiles with API key
-        const USE_FREE_TILES = false;
+
+        // Toggle between Mapy.cz (false) and Free tiles (true)
+        // Set to false to use Mapy.cz with API key (costs money)
+        // Set to true to use free tiles (no costs)
+        const USE_FREE_TILES = false; // Using Mapy.cz
         
         // Key locations (accurate coordinates)
         const LOCATIONS = {
@@ -610,9 +703,49 @@
             },
             train_line: {
                 'brnoStation_bohutice': {
-                    coords: [[49.1896, 16.6099], [49.1700, 16.5900], [49.1200, 16.5000], [49.0500, 16.4200], [48.9879, 16.3559]],
-                    length: 45000,
-                    duration: 3000
+                    // Train route edited in route-editor.html
+                    // Brno hl. n. → Bohutice (54 minutes)
+                    coords: [
+                        [49.190600, 16.612800],
+                        [49.184451, 16.607122],
+                        [49.163067, 16.607466],
+                        [49.161104, 16.604033],
+                        [49.162172, 16.551332],
+                        [49.167564, 16.539660],
+                        [49.167623, 16.532021],
+                        [49.158476, 16.516743],
+                        [49.152357, 16.470566],
+                        [49.146519, 16.465330],
+                        [49.136411, 16.461639],
+                        [49.121413, 16.465158],
+                        [49.118493, 16.462841],
+                        [49.117201, 16.462412],
+                        [49.113775, 16.466789],
+                        [49.111022, 16.466703],
+                        [49.109224, 16.463099],
+                        [49.103436, 16.461296],
+                        [49.101808, 16.457863],
+                        [49.103776, 16.450653],
+                        [49.100293, 16.443357],
+                        [49.092255, 16.442327],
+                        [49.081966, 16.425247],
+                        [49.081685, 16.402845],
+                        [49.085453, 16.394691],
+                        [49.085286, 16.390228],
+                        [49.080675, 16.386795],
+                        [49.074097, 16.370745],
+                        [49.053734, 16.352806],
+                        [49.053960, 16.340790],
+                        [49.050641, 16.335812],
+                        [49.040907, 16.340017],
+                        [49.031058, 16.343966],
+                        [49.023853, 16.338987],
+                        [49.003363, 16.357441],
+                        [48.995875, 16.354866],
+                        [48.987900, 16.356000]
+                    ],
+                    length: 45000,  // ~45 km
+                    duration: 3240  // 54 minutes (12:55-13:49)
                 }
             }
         };
@@ -620,7 +753,7 @@
         // ==============================================
         // STATE
         // ==============================================
-        
+
         let map = null;
         let activeTab = 'car';
         let currentStep = 0;
@@ -630,6 +763,12 @@
         let animationTimer = null;
         let routeCache = {};
         
+        // ==============================================
+        // MAP ABSTRACTION HELPERS
+        // ==============================================
+
+        // Removed complex abstraction - using simple Leaflet approach
+
         // ==============================================
         // INITIALIZATION
         // ==============================================
@@ -659,23 +798,53 @@
             if (tileLayer) {
                 map.removeLayer(tileLayer);
             }
-            
+
             activeLayer = layerName;
-            
-            if (USE_FREE_TILES) {
-                // Use free CartoDB tiles
+
+            // Use free maps for these layers, Mapy.cz for outdoor/aerial
+            if (['voyager', 'light', 'dark', 'toner', 'cyclosm', 'humanitarian'].includes(layerName) || USE_FREE_TILES) {
+                // All free map style options (NO API KEYS NEEDED!)
                 const tileUrls = {
                     basic: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-                    outdoor: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                    aerial: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                    outdoor: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    aerial: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+
+                    // CARTO Styles (all free, no API key)
+                    voyager: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', // Bright, blue water, clear labels
+                    light: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',           // Very bright, minimal
+                    dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',             // Dark gray, dimmed labels
+
+                    // Stamen Toner via Stadia (free, high-contrast black & white)
+                    toner: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+
+                    // OpenStreetMap variants (all free, no API key)
+                    cyclosm: 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',      // Cycling/outdoor with terrain
+                    humanitarian: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'              // Humanitarian OSM with good terrain
                 };
-                
-                tileLayer = L.tileLayer(tileUrls[layerName] || tileUrls.basic, {
-                    attribution: '&copy; OSM contributors',
-                    maxZoom: 19
+
+                const attributions = {
+                    basic: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    outdoor: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    aerial: '&copy; Google Maps',
+                    voyager: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    light: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    dark: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    toner: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://stamen.com/">Stamen Design</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    cyclosm: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, rendering: <a href="https://www.cyclosm.org/">CyclOSM</a>',
+                    humanitarian: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles courtesy of <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a>'
+                };
+
+                let tileUrl = tileUrls[layerName] || tileUrls.basic;
+                if (layerName === 'outdoor' && !USE_FREE_TILES) {
+                    tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                }
+
+                tileLayer = L.tileLayer(tileUrl, {
+                    attribution: attributions[layerName] || attributions.basic,
+                    maxZoom: 20
                 }).addTo(map);
             } else {
-                // Use Mapy.cz tiles
+                // Use Mapy.cz tiles for outdoor and aerial
                 tileLayer = L.tileLayer(
                     `https://api.mapy.com/v1/maptiles/${layerName}/256/{z}/{x}/{y}?apikey=${MAPY_API_KEY}`,
                     {
@@ -684,7 +853,7 @@
                     }
                 ).addTo(map);
             }
-            
+
             // Update button states
             document.querySelectorAll('.layer-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.layer === layerName);
@@ -749,13 +918,14 @@
         function updatePager() {
             const pager = document.getElementById('pager');
             const steps = STEPS[activeTab];
-            
-            pager.innerHTML = steps.map((step, i) => 
-                `<div class="pager-dot ${i === currentStep ? 'active' : ''}" 
-                      data-step="${i}" 
-                      data-label="${step.title}"></div>`
+
+            pager.innerHTML = steps.map((step, i) =>
+                `<div class="pager-dot ${i === currentStep ? 'active' : ''}"
+                      data-step="${i}">
+                    ${step.title}
+                 </div>`
             ).join('');
-            
+
             pager.querySelectorAll('.pager-dot').forEach(dot => {
                 dot.addEventListener('click', () => {
                     showStep(parseInt(dot.dataset.step));
@@ -1100,21 +1270,21 @@
                 layers.push(walkFallback);
             }
             
-            // Add route legend markers
+            // Add route legend markers - Převozník (blue) on top, Pešky (red) below
             const carIcon = L.divIcon({
                 className: 'custom-marker',
-                html: `<div class="marker-label" style="background: ${SHUTTLE_COLOR}; border-color: ${SHUTTLE_COLOR};">🚐 Shuttle</div>`,
-                iconSize: [100, 30],
-                iconAnchor: [50, 45]
+                html: `<div class="marker-label" style="background: ${SHUTTLE_COLOR}; border-color: ${SHUTTLE_COLOR};">🚐 Převozník</div>`,
+                iconSize: [120, 30],
+                iconAnchor: [60, 15]  // Top label
             });
             const carMarker = L.marker([48.983, 16.340], { icon: carIcon }).addTo(map);
             layers.push(carMarker);
-            
+
             const walkIcon = L.divIcon({
                 className: 'custom-marker',
                 html: `<div class="marker-label" style="background: ${WALK_COLOR}; border-color: ${WALK_COLOR};">🥾 Pěšky</div>`,
                 iconSize: [100, 30],
-                iconAnchor: [50, 15]
+                iconAnchor: [50, 45]  // Bottom label
             });
             const walkMarker = L.marker([48.983, 16.340], { icon: walkIcon }).addTo(map);
             layers.push(walkMarker);
@@ -1186,8 +1356,12 @@
                     ${durationText}
                 </div>
                 <div class="step-nav">
-                    <button class="nav-btn" onclick="prevStep()" ${currentStep === 0 ? 'disabled' : ''}>←</button>
-                    <button class="nav-btn" onclick="nextStep()" ${currentStep === steps.length - 1 ? 'disabled' : ''}>→</button>
+                    <button class="nav-btn" onclick="prevStep()" ${currentStep === 0 ? 'disabled' : ''}>
+                        <span class="arrow">←</span> Zpět
+                    </button>
+                    <button class="nav-btn" onclick="nextStep()" ${currentStep === steps.length - 1 ? 'disabled' : ''}>
+                        Další <span class="arrow">→</span>
+                    </button>
                 </div>
             `;
         }
@@ -1229,11 +1403,11 @@
             const steps = STEPS[activeTab];
             if (currentStep < steps.length - 1) showStep(currentStep + 1);
         }
-        
+
         // ==============================================
         // START
         // ==============================================
-        
+
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

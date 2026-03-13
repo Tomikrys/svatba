@@ -1,241 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Cathedral Viewer</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Tomáš & Eliška - Svatba 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/presentation.css">
 </head>
 <body>
-    <div id="loading">
-        <div class="loader"></div>
-        <p>Loading 3D Model...</p>
-    </div>
-    
-    <div id="canvas-container"></div>
-    
-    <div id="controls-panel">
-        <h3>🏛️ Scene Objects</h3>
-        
-        <div class="control-section">
-            <h4>Add Model</h4>
-            <div class="add-model-row">
-                <select id="modelSelect">
-                    <!-- Options loaded dynamically from models.json -->
-                </select>
-                <button id="addModelBtn">+ Add</button>
-            </div>
-        </div>
-        
-        <div class="control-section">
-            <h4>Objects in Scene</h4>
-            <div id="objectsList" class="objects-list">
-                <!-- Populated dynamically -->
-            </div>
-            <div class="button-row">
-                <button id="removeObjectBtn" class="danger-btn">Remove Selected</button>
-                <button id="clearSceneBtn" class="danger-btn">Clear All</button>
-            </div>
-        </div>
-        
-        <div class="control-section" id="selectedObjectPanel" style="display: none;">
-            <h4>Selected Object Transform</h4>
-            <div class="transform-grid">
-                <label>Position</label>
-                <div class="transform-row">
-                    <span>X:</span><input type="number" id="objPosX" step="0.1" value="0">
-                    <span>Y:</span><input type="number" id="objPosY" step="0.1" value="0">
-                    <span>Z:</span><input type="number" id="objPosZ" step="0.1" value="0">
-                </div>
-                <label>Rotation (°)</label>
-                <div class="transform-row">
-                    <span>X:</span><input type="number" id="objRotX" step="5" value="0">
-                    <span>Y:</span><input type="number" id="objRotY" step="5" value="0">
-                    <span>Z:</span><input type="number" id="objRotZ" step="5" value="0">
-                </div>
-                <label>Scale</label>
-                <div class="transform-row">
-                    <input type="number" id="objScale" step="0.1" min="0.1" value="1">
-                </div>
-            </div>
-        </div>
-        
-        <hr>
-        
-        <h3>💾 Save/Load Scenes</h3>
-        
-        <div class="control-section">
-            <h4>Save Current Scene</h4>
-            <div class="save-scene-row">
-                <input type="text" id="sceneName" placeholder="Scene name...">
-                <button id="saveSceneBtn">💾 Save</button>
-            </div>
-            <button id="exportScenesBtn" style="margin-top: 8px; width: 100%;">📤 Export All to JSON</button>
-        </div>
-        
-        <div class="control-section">
-            <h4>Saved Scenes</h4>
-            <div id="scenesList" class="scenes-list">
-                <p class="no-scenes">No saved scenes</p>
-            </div>
-        </div>
-        
-        <hr>
-        
-        <h3>🎨 Filter Controls</h3>
-        
-        <div class="control-section">
-            <h4>Filter Type</h4>
-            <select id="filterType">
-                <option value="none">None</option>
-                <option value="grayscale">Grayscale</option>
-                <option value="bayer">Bayer Dithering (B/W)</option>
-                <option value="bayerColor">Bayer Dithering (Color)</option>
-                <option value="bluenoise">Blue Noise Dithering</option>
-                <option value="sepia">Sepia</option>
-                <option value="invert">Invert</option>
-            </select>
-        </div>
-        
-        <div class="control-section">
-            <h4>Filter Intensity</h4>
-            <input type="range" id="filterIntensity" min="0" max="1" step="0.01" value="1">
-            <span id="intensityValue">1.00</span>
+    <div class="container">
+        <!-- Left side - 3D Scene -->
+        <div class="scene-container">
+            <!-- Loading indicator (hidden, for programmatic use only - visual loading is 3D) -->
+            <div id="loading" style="opacity: 0;"></div>
+            <div id="canvas-container"></div>
         </div>
 
-        <div class="control-section" id="colorNumSection" style="display: none;">
-            <h4>Color Levels</h4>
-            <select id="colorNum">
-                <option value="2">2 colors</option>
-                <option value="4" selected>4 colors</option>
-                <option value="8">8 colors</option>
-                <option value="16">16 colors</option>
-                <option value="32">32 colors</option>
-            </select>
-        </div>
-
-        <div class="control-section" id="bayerThresholdSection" style="display: none;">
-            <h4>Threshold</h4>
-            <input type="range" id="bayerThreshold" min="0" max="1" step="0.01" value="0.5">
-            <span id="bayerThresholdValue">0.50</span>
-        </div>
-
-        <div class="control-section" id="bayerSaturationSection" style="display: none;">
-            <h4>Saturation</h4>
-            <input type="range" id="bayerSaturation" min="0" max="2" step="0.01" value="1">
-            <span id="bayerSaturationValue">1.00</span>
-        </div>
-
-        <div class="control-section" id="biasSection" style="display: none;">
-            <h4>Threshold Bias</h4>
-            <input type="range" id="bias" min="-0.5" max="0.5" step="0.01" value="0">
-            <span id="biasValue">0.00</span>
-        </div>
-        
-        <hr>
-        
-        <h3>📷 Camera Controls</h3>
-        
-        <div class="control-section">
-            <h4>Camera Type</h4>
-            <select id="cameraType">
-                <option value="perspective">Perspective</option>
-                <option value="orthographic">Orthographic</option>
-            </select>
-        </div>
-        
-        <div class="control-section" id="fovSection">
-            <h4>Field of View</h4>
-            <input type="range" id="fov" min="20" max="120" step="1" value="60">
-            <span id="fovValue">60°</span>
-        </div>
-
-        <div class="control-section" id="zoomSection" style="display: none;">
-            <h4>Zoom</h4>
-            <input type="range" id="zoom" min="10" max="200" step="1" value="50">
-            <span id="zoomValue">50</span>
-        </div>
-
-        <div class="control-section">
-            <h4>Auto Rotate</h4>
-            <label class="switch">
-                <input type="checkbox" id="autoRotate">
-                <span class="slider"></span>
-            </label>
-        </div>
-
-        <div class="control-section" id="rotateSpeedSection" style="display: none;">
-            <h4>Rotation Speed</h4>
-            <input type="range" id="rotateSpeed" min="0.1" max="5" step="0.1" value="1">
-            <span id="rotateSpeedValue">1.0</span>
-        </div>
-        
-        <hr>
-        
-        <h3>💡 Lighting</h3>
-
-        <div class="control-section">
-            <h4>Exposure</h4>
-            <input type="range" id="exposure" min="0.1" max="3" step="0.1" value="1.5">
-            <span id="exposureValue">1.5</span>
-        </div>
-        
-        <div class="control-section">
-            <h4>Ambient Light</h4>
-            <input type="range" id="ambientIntensity" min="0" max="3" step="0.1" value="1.0">
-            <span id="ambientValue">1.0</span>
-        </div>
-        
-        <div class="control-section">
-            <h4>Main Light (Sun)</h4>
-            <input type="range" id="directionalIntensity" min="0" max="5" step="0.1" value="2.0">
-            <span id="directionalValue">2.0</span>
-        </div>
-
-        <div class="control-section">
-            <h4>Fill Light</h4>
-            <input type="range" id="fillLightIntensity" min="0" max="2" step="0.1" value="0.5">
-            <span id="fillLightValue">0.5</span>
-        </div>
-
-        <div class="control-section">
-            <h4>Sky Light</h4>
-            <input type="range" id="hemiLightIntensity" min="0" max="2" step="0.1" value="0.5">
-            <span id="hemiLightValue">0.5</span>
-        </div>
-        
-        <div class="control-section">
-            <h4>Background Color</h4>
-            <input type="color" id="bgColor" value="#1a1a2e">
-        </div>
-        
-        <hr>
-        
-        <div class="control-section">
-            <button id="resetBtn">Reset All Settings</button>
-        </div>
-        
-        <div class="help-text">
-            <p><strong>Controls:</strong></p>
-            <p>🖱️ Left click + drag: Rotate</p>
-            <p>🖱️ Right click + drag: Pan</p>
-            <p>🖱️ Scroll: Zoom</p>
-            <p>🖱️ Click object: Select</p>
+        <!-- Right side - Content (dynamically generated) -->
+        <div class="content-container" id="contentContainer">
+            <!-- Sections will be generated from scenes.json -->
         </div>
     </div>
-    
-    <button id="togglePanel">⚙️</button>
 
-    <!-- Import Maps for ES Modules -->
+    <!-- Progress dots (dynamically generated) -->
+    <div class="progress-dots" id="progressDots">
+        <!-- Dots will be generated from scenes.json -->
+    </div>
+
+    <!-- Import Maps for ES Modules (dev) or bundled JS (prod) -->
     <script type="importmap">
     {
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
         }
     }
     </script>
-    
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/presentation.js"></script>
 </body>
 </html>

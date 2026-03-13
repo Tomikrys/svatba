@@ -1,0 +1,156 @@
+LOADING UX: BEFORE vs AFTER
+═══════════════════════════════════════════════════════════════════
+
+BEFORE (Full-page blocking loader)
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                   │
+│                     #loading (fixed, z-index:1000)                │
+│                     Covers entire viewport                        │
+│                                                                   │
+│                          ⌛ Loading...                            │
+│                                                                   │
+│                     ┌───────────────────┐                        │
+│                     │   [  Loader  ]    │                        │
+│                     │   Načítám...      │                        │
+│                     └───────────────────┘                        │
+│                                                                   │
+│                                                                   │
+│                     Content is hidden below                       │
+│                     User sees nothing                            │
+│                     ❌ Bad UX                                     │
+│                                                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+Problems:
+  ❌ User sees blank screen
+  ❌ Can't access any information
+  ❌ Slow perceived load time
+  ❌ Feels unresponsive
+
+
+AFTER (Localized 3D-only loader)
+═══════════════════════════════════════════════════════════════════
+
+Desktop Layout (50/50 split):
+┌────────────────────────────┬──────────────────────────────────┐
+│   3D Scene Container       │     Content Container            │
+│   (50vw, fixed left)       │     (50vw, scrollable right)     │
+│                            │                                  │
+│  ┌──────────────────────┐  │  ╔════════════════════════════╗ │
+│  │  #loading (absolute) │  │  ║                            ║ │
+│  │                      │  │  ║    Tomáš & Eliška         ║ │
+│  │   ⌛ Načítám 3D      │  │  ║         &                  ║ │
+│  │      model...        │  │  ║                            ║ │
+│  │                      │  │  ║  Zveme vás na naši svatbu ║ │
+│  │  [  Loader  ]        │  │  ║                            ║ │
+│  │                      │  │  ║    19. září 2026          ║ │
+│  └──────────────────────┘  │  ║                            ║ │
+│                            │  ╚════════════════════════════╝ │
+│  (3D canvas loading)       │  ✅ Visible immediately!        │
+│                            │                                  │
+│                            │  [Scroll for more info]          │
+│                            │  - Location                      │
+│                            │  - RSVP form                     │
+│                            │  - Map                           │
+└────────────────────────────┴──────────────────────────────────┘
+
+Mobile Layout (Overlay):
+┌─────────────────────────────────────────────────────────────────┐
+│                    3D Scene (Full viewport)                      │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │              #loading (absolute, 100%)                   │   │
+│  │                                                          │   │
+│  │                 ⌛ Načítám 3D model...                   │   │
+│  │                   [  Loader  ]                           │   │
+│  │                                                          │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                                                                   │
+│  ╔═══════════════════════════════════════════════════════════╗  │
+│  ║  Content (Scrolls over 3D, semi-transparent)             ║  │
+│  ║                                                           ║  │
+│  ║              Tomáš & Eliška                              ║  │
+│  ║                   &                                       ║  │
+│  ║         Zveme vás na naši svatbu                         ║  │
+│  ║            19. září 2026                                 ║  │
+│  ║                                                           ║  │
+│  ║  ✅ Visible immediately!                                 ║  │
+│  ╚═══════════════════════════════════════════════════════════╝  │
+│                                                                   │
+│  [Scroll for more content...]                                   │
+└─────────────────────────────────────────────────────────────────┘
+
+
+LOADING SEQUENCE
+═══════════════════════════════════════════════════════════════════
+
+Timeline (0-3 seconds):
+
+t=0ms: Page HTML loads
+├─ Content container appears instantly ✅
+├─ Loading indicator shows over 3D area
+└─ User can already read wedding info!
+
+t=500ms: JavaScript initializes
+├─ generateSections() creates HTML content
+├─ Content fades in smoothly (fadeIn animation)
+└─ 3D scene starts loading models
+
+t=1000-3000ms: Models load
+├─ GLB files download
+├─ Models normalized and added to scene
+├─ Content remains fully accessible
+└─ User can scroll and read all info
+
+t=3000ms: Loading complete
+├─ #loading.hidden (opacity: 0, fade out)
+├─ 3D scene becomes visible
+├─ Camera starts tracking scroll
+└─ Full experience ready!
+
+
+Benefits:
+  ✅ Content visible at t=0ms
+  ✅ Users can find info immediately
+  ✅ Fast perceived load time
+  ✅ Professional progressive loading
+  ✅ 3D is enhancement, not blocker
+  ✅ Works on slow connections
+  ✅ Mobile-friendly
+
+
+CODE CHANGES
+═══════════════════════════════════════════════════════════════════
+
+HTML:
+  BEFORE: #loading at root level
+  AFTER:  #loading inside .scene-container
+
+CSS:
+  BEFORE: position: fixed; width: 100vw; height: 100vh; z-index: 1000;
+  AFTER:  position: absolute; width: 100%; height: 100%; z-index: 10;
+
+JavaScript:
+  No changes needed! generateSections() already called first.
+
+
+TESTING
+═══════════════════════════════════════════════════════════════════
+
+1. Fast connection:
+   - Content appears instantly
+   - Loading indicator briefly visible on 3D area
+   - Smooth fade-in of both elements
+
+2. Slow connection (Throttled 3G):
+   - Content STILL appears instantly
+   - Loading indicator visible longer on 3D area
+   - User can read all info while waiting
+   - ✅ Much better experience!
+
+3. Mobile:
+   - Content overlays 3D with semi-transparent background
+   - Can scroll and read immediately
+   - Loading indicator visible in background
+   - Works perfectly!

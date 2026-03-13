@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Editor - Svatba</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #e8e4dc;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: #14141f;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(201, 169, 89, 0.3);
+        }
+
+        h1 {
+            color: #c9a959;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        h2 {
+            color: #c9a959;
+            font-size: 1rem;
+            margin: 20px 0 10px;
+            font-weight: 400;
+            border-bottom: 1px solid rgba(201, 169, 89, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .instructions {
+            background: rgba(201, 169, 89, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .instructions strong {
+            color: #c9a959;
+        }
+
+        /* Controls */
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(201, 169, 89, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #c9a959;
+            color: #1a1a2e;
+        }
+        .btn-primary:hover {
+            background: #dbb963;
+        }
+
+        .btn-secondary {
+            background: rgba(201, 169, 89, 0.2);
+            color: #c9a959;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(201, 169, 89, 0.3);
+        }
+
+        /* Points list */
+        .points-list {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        .point-item {
+            padding: 4px 8px;
+            margin: 2px 0;
+            background: rgba(201, 169, 89, 0.1);
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .point-item .coords {
+            color: #c9a959;
+            flex: 1;
+            margin: 0 8px;
+        }
+
+        .point-item button {
+            background: rgba(229, 57, 53, 0.3);
+            border: none;
+            color: #e53935;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+
+        /* Output */
+        .output {
+            background: rgba(0,0,0,0.5);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(201, 169, 89, 0.2);
+        }
+
+        /* Map container */
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Coordinate display */
+        .coord-display {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(20, 20, 35, 0.95);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            z-index: 1000;
+            border: 1px solid rgba(201, 169, 89, 0.3);
+        }
+
+        .coord-display .lat { color: #4CAF50; }
+        .coord-display .lng { color: #2196F3; }
+
+        /* Layer buttons */
+        .map-layers {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 5px;
+        }
+
+        .layer-btn {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid rgba(201,169,89,0.3);
+            color: #888;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .layer-btn:hover {
+            color: #c9a959;
+            background: rgba(201,169,89,0.2);
+        }
+
+        .layer-btn.active {
+            color: #c9a959;
+            background: rgba(201,169,89,0.3);
+            border-color: #c9a959;
+        }
+
+        /* Edit marker styles */
+        .leaflet-marker-icon.edit-marker {
+            background: #4865df;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 12px !important;
+            height: 12px !important;
+            margin: -6px 0 0 -6px !important;
+            cursor: move;
+        }
+        .leaflet-marker-icon.edit-marker:hover {
+            background: #c9a959;
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>🛣️ Route Editor</h1>
+
+        <div class="instructions">
+            <strong>Instructions:</strong><br>
+            1. Select route type to edit<br>
+            2. <strong>Drag</strong> blue dots to move points<br>
+            3. <strong>Double-click</strong> dot to delete<br>
+            4. <strong>Right-click</strong> line to add point<br>
+            5. Export JSON when done
+        </div>
+
+        <h2>📍 Select Route</h2>
+        <div class="control-group">
+            <label>Route Type</label>
+            <select id="routeSelect">
+                <option value="">-- Choose route --</option>
+                <option value="train_line">🚂 Train (Brno → Bohutice)</option>
+                <option value="car_fast">🚗 Car (Fast route)</option>
+                <option value="foot_fast">🚶 Walk (Fast)</option>
+                <option value="shuttle">🚐 Shuttle (Bohutice → Venue)</option>
+                <option value="hike">🥾 Hike (Red trail)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <button class="btn btn-primary" id="loadRoute">📥 Load Route</button>
+        </div>
+
+        <h2>📌 Points (<span id="pointCount">0</span>)</h2>
+        <div class="points-list" id="pointsList">
+            <em style="color: #666;">Select and load a route first...</em>
+        </div>
+
+        <h2>📤 Export</h2>
+        <div class="control-group">
+            <button class="btn btn-primary" id="exportJSON">📋 Copy JSON</button>
+        </div>
+
+        <div class="output" id="output">// Select a route and click "Load Route" to start editing</div>
+    </div>
+
+    <div class="map-container">
+        <div class="map-layers">
+            <button class="layer-btn" data-layer="outdoor">🥾 Outdoor</button>
+            <button class="layer-btn active" data-layer="aerial">🛰️ Satellite</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="coord-display">
+            Cursor: <span class="lat" id="cursorLat">--</span>, <span class="lng" id="cursorLng">--</span>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // ROUTE DATA (from map.html)
+        // ==============================================
+
+        const ROUTES = {
+            train_line: [[49.1906,16.6128],[49.1882,16.6155],[49.1854,16.6210],[49.1812,16.6245],[49.1755,16.6288],[49.1650,16.6315],[49.1512,16.6205],[49.1398,16.6008],[49.1325,16.5825],[49.1255,16.5655],[49.1185,16.5485],[49.1125,16.5298],[49.1065,16.5115],[49.1021,16.4565],[49.0965,16.4562],[49.0928,16.4541],[49.0912,16.4533],[49.0885,16.4501],[49.0825,16.4462],[49.0772,16.4428],[49.0725,16.4395],[49.0685,16.4350],[49.0665,16.4322],[49.0644,16.4298],[49.0621,16.4278],[49.0585,16.4255],[49.0552,16.4185],[49.0515,16.4080],[49.0492,16.3989],[49.0465,16.3900],[49.0435,16.3750],[49.0395,16.3550],[49.0365,16.3380],[49.0345,16.3268],[49.0069,16.3456],[48.9952,16.3521],[48.9879,16.3560]],
+            car_fast: null,  // Will be fetched from API
+            foot_fast: null, // Will be fetched from API
+            shuttle: [[48.9879,16.3560],[48.9845,16.3455],[48.9825,16.3398],[48.9810,16.3320],[48.9795,16.3255],[48.9785,16.3210],[48.9778,16.3180]],
+            hike: [[48.9879,16.3560],[48.9850,16.3520],[48.9820,16.3480],[48.9795,16.3440],[48.9775,16.3400],[48.9760,16.3350],[48.9750,16.3300],[48.9745,16.3250],[48.9778,16.3180]]
+        };
+
+        // ==============================================
+        // STATE
+        // ==============================================
+
+        let map = null;
+        let tileLayer = null;
+        let activeLayer = 'aerial';
+        let currentRouteType = null;
+        let editMarkers = [];
+        let editPolyline = null;
+        let editRouteData = [];
+
+        // ==============================================
+        // INITIALIZATION
+        // ==============================================
+
+        function init() {
+            // Create map
+            map = L.map('map', {
+                center: [49.09, 16.48],
+                zoom: 10,
+                zoomControl: true
+            });
+
+            // Set initial tile layer
+            setTileLayer('aerial');
+
+            // Setup event listeners
+            setupUIEvents();
+            setupMapEvents();
+        }
+
+        function setTileLayer(layerName) {
+            if (tileLayer) {
+                map.removeLayer(tileLayer);
+            }
+
+            activeLayer = layerName;
+
+            const tileUrls = {
+                outdoor: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                aerial: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+            };
+
+            tileLayer = L.tileLayer(tileUrls[layerName], {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 20
+            }).addTo(map);
+
+            // Update button states
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.layer === layerName);
+            });
+        }
+
+        // ==============================================
+        // MAP EVENTS
+        // ==============================================
+
+        function setupMapEvents() {
+            // Update cursor coordinates
+            map.on('mousemove', (e) => {
+                document.getElementById('cursorLat').textContent = e.latlng.lat.toFixed(6);
+                document.getElementById('cursorLng').textContent = e.latlng.lng.toFixed(6);
+            });
+        }
+
+        // ==============================================
+        // UI EVENTS
+        // ==============================================
+
+        function setupUIEvents() {
+            // Layer buttons
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTileLayer(btn.dataset.layer);
+                });
+            });
+
+            // Load route
+            document.getElementById('loadRoute').addEventListener('click', loadRoute);
+
+            // Export
+            document.getElementById('exportJSON').addEventListener('click', exportJSON);
+        }
+
+        // ==============================================
+        // ROUTE EDITING
+        // ==============================================
+
+        function loadRoute() {
+            const select = document.getElementById('routeSelect');
+            const routeType = select.value;
+
+            if (!routeType) {
+                alert('Please select a route type first.');
+                return;
+            }
+
+            currentRouteType = routeType;
+            const routeData = ROUTES[routeType];
+
+            if (!routeData) {
+                alert('This route type uses API data and cannot be edited here.\nOnly local routes can be edited: train_line, shuttle, hike');
+                return;
+            }
+
+            // Clear existing
+            clearRoute();
+
+            // Load route data
+            editRouteData = routeData.map(p => [...p]);
+
+            // Draw polyline
+            editPolyline = L.polyline(editRouteData, {
+                color: '#4865df',
+                weight: 3,
+                opacity: 0.8
+            }).addTo(map);
+
+            // Right-click or Ctrl+click on polyline to add point
+            editPolyline.on('click', function(e) {
+                if (e.originalEvent.button === 1 || e.originalEvent.ctrlKey) {
+                    e.originalEvent.preventDefault();
+                    insertPointOnLine(e.latlng);
+                }
+            });
+
+            editPolyline.on('contextmenu', function(e) {
+                e.originalEvent.preventDefault();
+                insertPointOnLine(e.latlng);
+            });
+
+            // Add draggable markers
+            editRouteData.forEach((coord, index) => {
+                addEditMarker(coord, index);
+            });
+
+            // Fit map to route
+            map.fitBounds(editPolyline.getBounds(), { padding: [50, 50] });
+
+            // Update UI
+            updatePointsList();
+        }
+
+        function clearRoute() {
+            // Remove markers
+            editMarkers.forEach(m => map.removeLayer(m));
+            editMarkers = [];
+
+            // Remove polyline
+            if (editPolyline) {
+                map.removeLayer(editPolyline);
+                editPolyline = null;
+            }
+
+            editRouteData = [];
+        }
+
+        function addEditMarker(coord, index) {
+            const marker = L.marker(coord, {
+                draggable: true,
+                icon: L.divIcon({
+                    className: 'edit-marker',
+                    iconSize: [12, 12]
+                })
+            }).addTo(map);
+
+            // Update route on drag
+            marker.on('dragend', function(e) {
+                const newPos = e.target.getLatLng();
+                editRouteData[index] = [newPos.lat, newPos.lng];
+                updateEditPolyline();
+                updatePointsList();
+            });
+
+            // Delete on double-click
+            marker.on('dblclick', function(e) {
+                e.originalEvent.stopPropagation();
+                if (confirm(`Delete point #${index + 1}?`)) {
+                    map.removeLayer(marker);
+                    editMarkers.splice(index, 1);
+                    editRouteData.splice(index, 1);
+                    updateEditPolyline();
+                    rebuildEditMarkers();
+                }
+            });
+
+            // Tooltip with index
+            marker.bindTooltip(`#${index + 1}`, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -5]
+            });
+
+            editMarkers.push(marker);
+        }
+
+        function rebuildEditMarkers() {
+            // Clear all markers
+            editMarkers.forEach(m => map.removeLayer(m));
+            editMarkers = [];
+
+            // Recreate with new indices
+            editRouteData.forEach((coord, index) => {
+                addEditMarker(coord, index);
+            });
+
+            updatePointsList();
+        }
+
+        function updateEditPolyline() {
+            if (editPolyline) {
+                editPolyline.setLatLngs(editRouteData);
+            }
+        }
+
+        function insertPointOnLine(latlng) {
+            // Find the closest segment
+            let minDist = Infinity;
+            let insertIndex = -1;
+
+            for (let i = 0; i < editRouteData.length - 1; i++) {
+                const p1 = L.latLng(editRouteData[i]);
+                const p2 = L.latLng(editRouteData[i + 1]);
+                const dist = distanceToSegment(latlng, p1, p2);
+
+                if (dist < minDist) {
+                    minDist = dist;
+                    insertIndex = i + 1;
+                }
+            }
+
+            if (insertIndex > 0) {
+                // Insert new point
+                editRouteData.splice(insertIndex, 0, [latlng.lat, latlng.lng]);
+                updateEditPolyline();
+                rebuildEditMarkers();
+            }
+        }
+
+        function distanceToSegment(point, p1, p2) {
+            const A = point.lng - p1.lng;
+            const B = point.lat - p1.lat;
+            const C = p2.lng - p1.lng;
+            const D = p2.lat - p1.lat;
+
+            const dot = A * C + B * D;
+            const lenSq = C * C + D * D;
+            let param = -1;
+
+            if (lenSq !== 0) param = dot / lenSq;
+
+            let xx, yy;
+
+            if (param < 0) {
+                xx = p1.lng;
+                yy = p1.lat;
+            } else if (param > 1) {
+                xx = p2.lng;
+                yy = p2.lat;
+            } else {
+                xx = p1.lng + param * C;
+                yy = p1.lat + param * D;
+            }
+
+            const dx = point.lng - xx;
+            const dy = point.lat - yy;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        function updatePointsList() {
+            const container = document.getElementById('pointsList');
+            document.getElementById('pointCount').textContent = editRouteData.length;
+
+            if (editRouteData.length === 0) {
+                container.innerHTML = '<em style="color: #666;">Select and load a route first...</em>';
+                return;
+            }
+
+            container.innerHTML = editRouteData.map((p, i) => `
+                <div class="point-item">
+                    <span>${i + 1}.</span>
+                    <span class="coords">[${p[0].toFixed(6)}, ${p[1].toFixed(6)}]</span>
+                </div>
+            `).join('');
+        }
+
+        // ==============================================
+        // EXPORT
+        // ==============================================
+
+        function exportJSON() {
+            if (editRouteData.length === 0) {
+                alert('No route data to export. Load a route first.');
+                return;
+            }
+
+            // Format as JSON array
+            let output = `"${currentRouteType}": {\n  "coords": [\n`;
+            editRouteData.forEach((coord, i) => {
+                const comma = i < editRouteData.length - 1 ? ',' : '';
+                output += `    [${coord[0].toFixed(6)}, ${coord[1].toFixed(6)}]${comma}\n`;
+            });
+            output += '  ]\n}';
+
+            document.getElementById('output').textContent = output;
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(output).then(() => {
+                alert('✅ Route JSON copied to clipboard!\nYou can paste it here or send it to me.');
+                console.log('Exported route:', output);
+            }).catch(err => {
+                console.error('Clipboard error:', err);
+                alert('❌ Clipboard error. Output is shown below and in console (F12).');
+                console.log(output);
+            });
+        }
+
+        // ==============================================
+        // START
+        // ==============================================
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
