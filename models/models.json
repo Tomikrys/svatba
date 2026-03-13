@@ -14,11 +14,6 @@
             "id": "manzele",
             "name": "Couple (Manželé)",
             "file": "manzele.glb"
-        },
-        {
-            "id": "svatebcani",
-            "name": "Wedding Guests (Svatebčané)",
-            "file": "svatebcani simple.glb"
         }
     ]
 }

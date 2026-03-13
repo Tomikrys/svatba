@@ -27,8 +27,8 @@
         }
       ],
       "camera": {
-        "position": { "x": 0.105, "y": -0.236, "z": 3.24 },
-        "target": { "x": 0.13, "y": -0.197, "z": -0.11 },
+        "position": { "x": 0.009, "y": -0.9, "z": 1.23 },
+        "target": { "x": -0.021, "y": -0.614, "z": -0.056 },
         "type": "perspective",
         "fov": 49,
         "zoom": 50
@@ -55,7 +55,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.5
+        "wiggleAmount": 0.08
       }
     },
     {
@@ -85,8 +85,8 @@
         }
       ],
       "camera": {
-        "position": { "x": 0.009, "y": -0.9, "z": 1.23 },
-        "target": { "x": -0.021, "y": -0.614, "z": -0.056 },
+        "position": { "x": 0.105, "y": -0.236, "z": 3.24 },
+        "target": { "x": 0.13, "y": -0.197, "z": -0.11 },
         "type": "perspective",
         "fov": 49,
         "zoom": 50
@@ -113,7 +113,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.05
+        "wiggleAmount": 0.12
       }
     },
     {
@@ -171,7 +171,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.02
+        "wiggleAmount": 0.04
       }
     },
     {
@@ -219,7 +219,7 @@
         "zoom": 50,
         "autoRotate": false,
         "rotateSpeed": 1,
-        "ambientIntensity": 3,
+        "ambientIntensity": 2.5,
         "directionalIntensity": 5,
         "fillLightIntensity": 2,
         "hemiLightIntensity": 2,
@@ -229,7 +229,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.02
+        "wiggleAmount": 0.03
       }
     },
     {
@@ -287,7 +287,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.08
+        "wiggleAmount": 0.10
       }
     },
     {
@@ -345,7 +345,7 @@
         "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.7
+        "wiggleAmount": 0.15
       }
     }
   ]

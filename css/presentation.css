@@ -30,6 +30,7 @@ body {
     width: 50vw;
     height: 100vh;
     z-index: 1;
+    /* Allow loading indicator to be positioned relative to this */
 }
 
 #canvas-container {
@@ -42,6 +43,20 @@ body {
     margin-left: 50vw;
     width: 50vw;
     min-height: 100vh;
+    /* Content is visible immediately, even before 3D loads */
+    opacity: 1;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Content Sections */
@@ -58,6 +73,13 @@ body {
 /* Section 1 - Announcement */
 .section-announcement {
     background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+}
+
+.section-announcement .website {
+    font-size: 0.9rem;
+    color: rgba(245, 240, 232, 0.5);
+    margin-bottom: 30px;
+    letter-spacing: 0.05em;
 }
 
 .section-announcement .ornament {
@@ -141,11 +163,18 @@ body {
     color: rgba(245, 240, 232, 0.8);
 }
 
-.location-card .time {
+location-card .time {
     font-size: 1.5rem;
     color: #c9a050;
     margin-top: 20px;
     font-weight: 500;
+}
+
+.location-card .date {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: rgba(245, 240, 232, 0.8);
+    margin-top: 10px;
 }
 
 /* Section 3 - Form */
@@ -250,7 +279,63 @@ body {
     text-align: center;
 }
 
-/* Progress indicator */
+.section-blank .info-text {
+    max-width: 500px;
+    text-align: left;
+}
+
+.section-blank .info-text p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.section-blank .info-text a {
+    color: #c9a050;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201, 160, 80, 0.3);
+    transition: border-color 0.3s;
+}
+
+.section-blank .info-text a:hover {
+    border-bottom-color: #c9a050;
+}
+
+/* Map intro section */
+.section-map-intro {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+}
+
+.section-map-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    color: #c9a050;
+    text-align: center;
+}
+
+/* Closing section */
+.section-closing {
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+}
+
+.section-closing h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    color: #c9a050;
+    text-align: center;
+}
+
+.section-closing p {
+    font-size: 1.3rem;
+    color: rgba(245, 240, 232, 0.7);
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Progress indicator - Desktop */
 .progress-dots {
     position: fixed;
     right: calc(50vw + 30px);
@@ -281,20 +366,22 @@ body {
     background: rgba(201, 160, 80, 0.6);
 }
 
-/* Loading screen */
+/* Loading screen - minimized since 3D loading indicator is used */
+/* Loading indicator - only covers 3D scene area */
 #loading {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #1a1a2e;
+    width: 100%;
+    height: 100%;
+    background: transparent;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 10;
     transition: opacity 0.5s ease;
+    pointer-events: none;
 }
 
 #loading.hidden {
@@ -303,78 +390,195 @@ body {
 }
 
 .loader {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(201, 160, 80, 0.3);
-    border-top-color: #c9a050;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    display: none;  /* Hidden - using 3D loading indicator instead */
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+#loading p {
+    display: none;  /* Hidden - using 3D loading indicator instead */
 }
 
-/* Mobile Layout */
+/* ============================================
+   MOBILE LAYOUT - Option A: Full-screen 3D with overlay
+   ============================================ */
 @media (max-width: 1024px) {
     .container {
         flex-direction: column;
     }
 
-    /* On mobile: 3D scene fixed at bottom */
+    /* 3D scene fills entire viewport */
     .scene-container {
         position: fixed;
         left: 0;
-        top: auto;
-        bottom: 0;
+        top: 0;
         width: 100vw;
-        height: 40vh;
-        z-index: 10;
+        height: 100vh;
+        z-index: 1;
     }
 
-    /* Content scrolls above the scene */
+    /* Content scrolls OVER the 3D scene with transparent background */
     .content-container {
+        position: relative;
         margin-left: 0;
         width: 100vw;
-        padding-bottom: 40vh;
+        z-index: 10;
+        pointer-events: none;  /* Allow clicks to pass through to 3D */
     }
 
     .section {
-        min-height: 70vh;
-        padding: 40px 30px;
+        min-height: 100vh;
+        padding: 40px 25px;
+        pointer-events: auto;  /* Restore pointer events for content */
+        /* Semi-transparent background overlay */
+        background: linear-gradient(
+            180deg,
+            rgba(26, 26, 46, 0.85) 0%,
+            rgba(26, 26, 46, 0.7) 50%,
+            rgba(26, 26, 46, 0.5) 100%
+        );
+        backdrop-filter: blur(2px);
     }
 
-    .progress-dots {
-        position: fixed;
-        right: 15px;
-        top: 50%;
-        bottom: auto;
-        transform: translateY(-50%);
-        flex-direction: column;
-        z-index: 100;
+    /* First section (announcement) - minimal overlay to show 3D */
+    .section-announcement {
+        background: linear-gradient(
+            180deg,
+            rgba(26, 26, 46, 0.6) 0%,
+            rgba(26, 26, 46, 0.3) 40%,
+            transparent 100%
+        );
+        backdrop-filter: none;
+        justify-content: flex-start;
+        padding-top: 15vh;
+        min-height: 100vh;
     }
 
     .section-announcement h1 {
-        font-size: 2.2rem;
-        letter-spacing: 0.15em;
+        font-size: 2.5rem;
+        letter-spacing: 0.2em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
     }
 
     .section-announcement .ampersand {
-        font-size: 2rem;
+        font-size: 2.2rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .section-announcement .ornament {
+        margin: 20px auto;
+        box-shadow: 0 0 10px rgba(201, 160, 80, 0.5);
+    }
+
+    .section-announcement .subtitle {
+        font-size: 1rem;
+        letter-spacing: 0.3em;
+        margin-top: 25px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
     }
 
     .section-announcement .date {
-        font-size: 1.8rem;
+        font-size: 2rem;
+        margin-top: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Other sections need more solid background for readability */
+    .section-location,
+    .section-form,
+    .section-info,
+    .section-closing,
+    .section-blank {
+        background: linear-gradient(
+            180deg,
+            rgba(26, 26, 46, 0.92) 0%,
+            rgba(40, 40, 70, 0.88) 50%,
+            rgba(26, 26, 46, 0.92) 100%
+        );
+        backdrop-filter: blur(8px);
     }
 
     .section-location h2,
     .section-form h2 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        letter-spacing: 0.15em;
     }
 
     .location-card,
     .form-container {
+        padding: 25px 20px;
+        background: rgba(26, 26, 46, 0.8);
+        backdrop-filter: blur(10px);
+    }
+
+    .location-card h3 {
+        font-size: 1.4rem;
+    }
+
+    .location-card p {
+        font-size: 1.1rem;
+    }
+
+    /* Progress dots - bottom center on mobile */
+    .progress-dots {
+        position: fixed;
+        right: auto;
+        left: 50%;
+        top: auto;
+        bottom: 20px;
+        transform: translateX(-50%);
+        flex-direction: row;
+        gap: 12px;
+        z-index: 100;
+        background: rgba(26, 26, 46, 0.6);
+        padding: 10px 20px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .progress-dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .progress-dot.active {
+        transform: scale(1.4);
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .section-announcement h1 {
+        font-size: 2rem;
+        letter-spacing: 0.15em;
+    }
+
+    .section-announcement .ampersand {
+        font-size: 1.8rem;
+        margin: 15px 0;
+    }
+
+    .section-announcement .date {
+        font-size: 1.6rem;
+    }
+
+    .section-announcement .subtitle {
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+    }
+
+    .section {
         padding: 30px 20px;
+    }
+
+    .location-card,
+    .form-container {
+        padding: 20px 15px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        font-size: 1rem;
     }
 }
 
@@ -384,7 +588,7 @@ body {
     flex-direction: column;
     justify-content: stretch;
     padding: 0;
-    background: #1a1a2e;
+    background: rgba(26, 26, 46, 0.95);
     min-height: 100vh;
 }
 
@@ -453,4 +657,25 @@ body {
     color: rgba(245, 240, 232, 0.7);
     margin-top: 20px;
     text-align: center;
+}
+
+@media (max-width: 1024px) {
+    .section-map {
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    .section-up {
+        background: linear-gradient(
+            180deg,
+            rgba(26, 26, 46, 0.85) 0%,
+            rgba(40, 40, 70, 0.75) 50%,
+            rgba(26, 26, 46, 0.85) 100%
+        );
+        backdrop-filter: blur(5px);
+    }
+
+    .section-up h2 {
+        font-size: 2rem;
+    }
 }
