@@ -3,6 +3,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { MapWidget } from './utils/MapWidget.js';
+import { initRSVPForm } from './components/RSVPForm.js';
 
 // Bayer Dithering Shader (Black & White)
 const BayerDitherShader = {
@@ -168,71 +170,140 @@ const sectionContentMap = {
         type: 'map-intro',
         content: `
             <h2>Jak a kudy?</h2>
-            <div class="map-iframe-container" style="width: 100%; max-width: 800px; height: 500px; margin-top: 40px;">
-                <iframe id="mapIframe" src="map.html" frameborder="0" style="width: 100%; height: 100%; border: 2px solid rgba(201, 160, 80, 0.3); border-radius: 8px;"></iframe>
+            <div class="map-widget" id="mapWidget">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" data-tab="car">
+                        <span class="tab-emoji">🚗</span> Autem
+                    </button>
+                    <button class="tab" data-tab="train">
+                        <span class="tab-emoji">🚂</span> Vlakem
+                    </button>
+                </div>
+
+                <!-- Map body -->
+                <div class="map-body">
+                    <!-- Pager -->
+                    <div class="pager" id="pager"></div>
+
+                    <!-- Main area -->
+                    <div class="map-main">
+                        <!-- Step info at top -->
+                        <div class="step-info" id="stepInfo">
+                            <div class="step-content">
+                                <h3 class="step-title">Načítám...</h3>
+                                <p class="step-desc">Prosím čekejte</p>
+                            </div>
+                        </div>
+
+                        <!-- Layer selector -->
+                        <div class="map-layers">
+                            <button class="layer-btn active" data-layer="outdoor">🗺️ Mapy.cz</button>
+                            <button class="layer-btn" data-layer="aerial">🛰️ Satelit</button>
+                            <button class="layer-btn" data-layer="voyager">🌐 Voyager</button>
+                            <button class="layer-btn" data-layer="light">☀️ Světlá</button>
+                            <button class="layer-btn" data-layer="dark">🌙 Tmavá</button>
+                            <button class="layer-btn" data-layer="cyclosm">🚴 CyclOSM</button>
+                            <button class="layer-btn" data-layer="humanitarian">🌍 HOT</button>
+                        </div>
+
+                        <div id="map" style="position: relative;">
+                            <div class="map-loading" id="mapLoading">Načítám trasu...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="map-links" id="mapLinks">
+                    <a href="https://mapy.cz/zakladni?x=16.4644&y=49.0896&z=10" target="_blank">📍 Otevřít v Mapy.cz</a>
+                    <a href="https://www.google.com/maps/dir/49.1975465,16.6032531/48.9777649,16.3183441" target="_blank">📍 Otevřít v Google Maps</a>
+                </div>
             </div>
         `
     },
     'up': {
         type: 'form',
         content: `
-            <h2>Potvrďte účast na veselce</h2>
+            <h2>Potvrďte účast</h2>
             <div class="form-container">
                 <form id="rsvpForm">
                     <div class="form-group">
-                        <label>Tvůj e-mail</label>
-                        <input type="email" name="email" required placeholder="vas@email.cz">
+                        <label>Tvůj email</label>
+                        <input type="email" name="email" placeholder="vas@email.cz">
                     </div>
                     <div class="form-group">
-                        <label>Jména těch co přihlašuješ:</label>
-                        <textarea name="names" rows="2" placeholder="Jan Novák, Jana Nováková"></textarea>
+                        <label>Počet osob</label>
+                        <div class="guest-count-wrapper">
+                            <div class="radio-group horizontal">
+                                <label class="radio-label"><input type="radio" name="guestCount" value="1"><span>1</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="2"><span>2</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="3"><span>3</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="4"><span>4</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="5"><span>5</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="6"><span>6</span></label>
+                                <label class="radio-label"><input type="radio" name="guestCount" value="7"><span>7</span></label>
+                                <label class="radio-label guest-count-other"><input type="radio" name="guestCount" value="other"><span>8+</span></label>
+                            </div>
+                            <div class="guest-count-custom" style="display:none;">
+                                <input type="number" name="guestCountCustom" min="8" max="50" placeholder="Počet">
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label>Počet osob číslem:</label>
-                        <input type="number" name="guestCount" min="1" placeholder="2">
+                        <label>Jména těch, co přihlašuješ *</label>
+                        <textarea name="names" rows="2" required placeholder="Jan Novák, Marie Nováková..."></textarea>
+                    </div>
+                    <div class="form-group attendance-group">
+                        <label>Jedete na obřad nebo aj na veselku? *</label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="attendance" value="Jen na obřad"><span>Jen na obřad</span></label>
+                            <label class="radio-label"><input type="radio" name="attendance" value="Jen na veselku"><span>Jen na veselku</span></label>
+                            <label class="radio-label"><input type="radio" name="attendance" value="Na obřad i veselku"><span>Na obřad i veselku</span></label>
+                        </div>
+                    </div>
+                    <div class="transport-section" style="display:none;">
+                        <div class="form-group">
+                            <label>Jak se plánujete přemístit z obřadu na veselku?</label>
+                            <div class="radio-group horizontal">
+                                <label class="radio-label"><input type="radio" name="transport" value="Autem"><span>Autem</span></label>
+                                <label class="radio-label"><input type="radio" name="transport" value="Vlakem"><span>Vlakem</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group car-seats-field" style="display:none;">
+                            <label>Kolik osob jste ochotni vzít autem?</label>
+                            <div class="radio-group horizontal">
+                                <label class="radio-label"><input type="radio" name="carSeats" value="1"><span>1</span></label>
+                                <label class="radio-label"><input type="radio" name="carSeats" value="2"><span>2</span></label>
+                                <label class="radio-label"><input type="radio" name="carSeats" value="3"><span>3</span></label>
+                                <label class="radio-label"><input type="radio" name="carSeats" value="4"><span>4</span></label>
+                                <label class="radio-label"><input type="radio" name="carSeats" value="5"><span>5</span></label>
+                                <label class="radio-label"><input type="radio" name="carSeats" value="6"><span>6</span></label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Budete večer potřebovat někam odvézt?</label>
+                            <div class="radio-group horizontal">
+                                <label class="radio-label"><input type="radio" name="needRide" value="Ano"><span>Ano</span></label>
+                                <label class="radio-label"><input type="radio" name="needRide" value="Ne"><span>Ne</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none;">
+                        <label>Chtěli byste nám pomoct s organizací?</label>
+                        <textarea name="helpOffer" rows="2" placeholder="Třeba na hodinku, s přípravou..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Jedete na obřad nebo aj na veselku?</label>
-                        <select name="attendance">
-                            <option value="">Vyberte...</option>
-                            <option value="obrad">Jen na obřad</option>
-                            <option value="veselka">Jen na veselku</option>
-                            <option value="oboje">Na obřad i veselku</option>
-                        </select>
+                        <label>Poznámky (alergie atd..)</label>
+                        <textarea name="notes" rows="2" placeholder="Potravinové alergie, dietní omezení..."></textarea>
                     </div>
-                    <div class="form-group">
-                        <label>Jak dojedete?</label>
-                        <select name="transport">
-                            <option value="">Vyberte...</option>
-                            <option value="vlak">Vlakem</option>
-                            <option value="auto">Autem</option>
-                            <option value="jine">Jinak</option>
-                        </select>
+                    <div class="form-group" style="display:none;">
+                        <label>Přání na písničku do playlistu</label>
+                        <input type="text" name="songRequest" placeholder="Interpret - Název písně">
                     </div>
-                    <div class="form-group">
-                        <label>Kolik osob jste ochotni/schopni přepravit ze svatby na veselku?</label>
-                        <input type="number" name="carCapacity" min="0" placeholder="0">
+                    <div class="form-buttons">
+                        <button type="submit" class="submit-btn">Odeslat ❤️</button>
+                        <button type="button" class="reset-btn">Vymazat</button>
                     </div>
-                    <div class="form-group">
-                        <label>Budete večer potřebovat někam odvézt po okolí?</label>
-                        <select name="needRide">
-                            <option value="ne">Ne</option>
-                            <option value="ano">Ano</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Rád vám pomůžu s organizací (třeba na hodinku) nebo s přípravou?</label>
-                        <textarea name="help" rows="2" placeholder="Vaše nabídka pomoci..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Co se jinam nevešlo (potravinové alergie, …)</label>
-                        <textarea name="other" rows="2" placeholder="Další informace..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Přání na písničku do afterparty playlistu</label>
-                        <input type="text" name="song" placeholder="Interpret - Název písně">
-                    </div>
-                    <button type="submit" class="submit-btn">Odeslat</button>
                 </form>
             </div>
         `
@@ -272,8 +343,10 @@ export class PresentationViewer {
         this.wiggleAmount = 0.15; // How much the camera "wiggles"
         this.hasDeviceOrientation = false;
 
-        // Map iframe reference
-        this.mapIframe = null;
+        // Leaflet map reference
+        this.leafletMap = null;
+        this.scrollZoomMessageShown = false;
+        this.mapWidget = null;
 
         // 3D loading indicator
         this.loadingIndicator = null;
@@ -313,6 +386,9 @@ export class PresentationViewer {
             dot.dataset.section = index;
             progressDots.appendChild(dot);
         });
+        
+        // Initialize RSVP form after sections are created
+        initRSVPForm();
     }
 
     init() {
@@ -681,7 +757,7 @@ export class PresentationViewer {
                     
                     // Also check if this is the map section and show map directly
                     const sceneData = this.scenesArray[sectionIndex];
-                    if (sceneData && sceneData.name === 'mapa') {
+                    if (sceneData && sceneData.name === 'inside lightning') {
                         this.showMap();
                     }
                 }
@@ -704,7 +780,7 @@ export class PresentationViewer {
         const sceneData = this.scenesArray[sceneIndex];
 
         // Check if this is the map scene
-        if (sceneData.name === 'mapa') {
+        if (sceneData.name === 'inside lightning') {
             this.showMap();
         } else {
             this.hideMap();
@@ -825,17 +901,32 @@ export class PresentationViewer {
         });
     }
     
-    // Show map (iframe is always present, just make sure it's visible)
-    showMap() {
-        const iframe = document.getElementById('mapIframe');
-        if (iframe) {
-            iframe.style.display = 'block';
-        }
+    // Initialize Map Widget
+    initMap() {
+        if (this.mapWidget) return; // Already initialized
+
+        const mapElement = document.getElementById('map');
+        if (!mapElement) return;
+
+        // Initialize the map widget
+        this.mapWidget = new MapWidget();
+        this.mapWidget.init();
     }
-    
+
+    // Show map
+    showMap() {
+        // Initialize map when first showing it
+        setTimeout(() => {
+            this.initMap();
+            if (this.mapWidget) {
+                this.mapWidget.refresh(); // Refresh map size
+            }
+        }, 100);
+    }
+
     // Hide map
     hideMap() {
-        // No need to hide - iframe is part of the section
+        // No need to hide - map is part of the section
     }
 
     onResize() {

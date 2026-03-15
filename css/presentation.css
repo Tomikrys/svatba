@@ -72,7 +72,7 @@ body {
 
 /* Section 1 - Announcement */
 .section-announcement {
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(40, 40, 70, 0.8) 100%);
 }
 
 .section-announcement .website {
@@ -128,7 +128,7 @@ body {
 
 /* Section 2 - Location */
 .section-location {
-    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.85) 0%, rgba(26, 26, 46, 0.85) 100%);
 }
 
 .section-location h2 {
@@ -179,7 +179,7 @@ location-card .time {
 
 /* Section 3 - Form */
 .section-form {
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.85) 0%, rgba(40, 40, 70, 0.85) 100%);
 }
 
 .section-form h2 {
@@ -193,75 +193,358 @@ location-card .time {
 }
 
 .form-container {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(201, 160, 80, 0.3);
-    border-radius: 8px;
-    padding: 40px;
+    background: transparent;
+    border: none;
+    padding: 10px;
     width: 100%;
-    max-width: 400px;
+    max-width: 480px;
 }
 
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 22px;
 }
 
 .form-group label {
     display: block;
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    color: rgba(245, 240, 232, 0.7);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    margin-bottom: 8px;
+    color: rgba(201, 160, 80, 0.85);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(201, 160, 80, 0.3);
-    border-radius: 4px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(201, 160, 80, 0.2);
+    border-radius: 6px;
     color: #f5f0e8;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(245, 240, 232, 0.5);
+    font-style: italic;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: rgba(201, 160, 80, 0.4);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #c9a050;
+    border-color: rgba(201, 160, 80, 0.6);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(201, 160, 80, 0.1);
 }
 
 .form-group select option {
     background: #1a1a2e;
 }
 
-.submit-btn {
-    width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, #c9a050, #d4b366);
-    border: none;
-    border-radius: 4px;
-    color: #1a1a2e;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+/* Radio button groups */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(201, 160, 80, 0.3);
+.radio-group.horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: transparent;
+    border: 1px solid rgba(201, 160, 80, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    position: relative;
+    min-height: 44px; /* Touch target minimum */
+}
+
+.radio-group.horizontal .radio-label {
+    padding: 10px 14px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Number count radio buttons - uniform pill style */
+.radio-group.horizontal .radio-label:has(input[name="guestCount"]),
+.radio-group.horizontal .radio-label:has(input[name="carSeats"]) {
+    padding: 0;
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 22px;
+    text-align: center;
+}
+
+.radio-group.horizontal .radio-label:has(input[name="guestCount"]) span,
+.radio-group.horizontal .radio-label:has(input[name="carSeats"]) span {
+    display: block;
+    width: 100%;
+    line-height: 44px;
+    text-align: center;
+}
+
+.radio-label:hover {
+    background: rgba(201, 160, 80, 0.1);
+    border-color: rgba(201, 160, 80, 0.4);
+    transform: translateY(-1px);
+}
+
+/* Hide actual radio button, use custom styling */
+.radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Checked state */
+.radio-label:has(input[type="radio"]:checked) {
+    background: rgba(201, 160, 80, 0.18);
+    border-color: rgba(201, 160, 80, 0.6);
+    box-shadow: 0 0 12px rgba(201, 160, 80, 0.15), inset 0 0 20px rgba(201, 160, 80, 0.05);
+}
+
+.radio-label:has(input[type="radio"]:checked) span {
+    color: #c9a050;
+    font-weight: 500;
+}
+
+.radio-label span {
+    color: rgba(245, 240, 232, 0.8);
+    transition: all 0.3s ease;
+    font-weight: 400;
+}
+
+/* Form buttons container */
+.form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201, 160, 80, 0.15);
+}
+
+.submit-btn {
+    flex: 1;
+    padding: 14px 24px;
+    background: transparent;
+    border: 1.5px solid rgba(201, 160, 80, 0.6);
+    border-radius: 25px;
+    color: #c9a050;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(201, 160, 80, 0.15), rgba(201, 160, 80, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+    border-color: #c9a050;
+    color: #f5f0e8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(201, 160, 80, 0.2);
+}
+
+.submit-btn:hover:not(:disabled)::before {
+    opacity: 1;
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.reset-btn {
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid rgba(201, 160, 80, 0.25);
+    border-radius: 25px;
+    color: rgba(245, 240, 232, 0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: rgba(201, 160, 80, 0.05);
+    border-color: rgba(201, 160, 80, 0.4);
+    color: rgba(245, 240, 232, 0.8);
+}
+
+/* Form messages */
+.form-message {
+    padding: 15px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.form-message.success {
+    background: rgba(80, 160, 80, 0.2);
+    border: 1px solid rgba(80, 160, 80, 0.4);
+    color: #90ee90;
+}
+
+.form-message.error {
+    background: rgba(160, 80, 80, 0.2);
+    border: 1px solid rgba(160, 80, 80, 0.4);
+    color: #ff9090;
+}
+
+/* Form field errors */
+.field-error {
+    display: block;
+    color: #ff9090;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.form-group input.error,
+.form-group textarea.error,
+.form-group select.error {
+    border-color: rgba(255, 100, 100, 0.6);
+}
+
+/* Form success state */
+.form-success {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.form-success .success-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.form-success h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #c9a050;
+    margin-bottom: 15px;
+}
+
+.form-success p {
+    font-size: 1.1rem;
+    color: rgba(245, 240, 232, 0.8);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.reset-form-btn {
+    padding: 12px 25px;
+    background: transparent;
+    border: 1px solid rgba(201, 160, 80, 0.4);
+    border-radius: 4px;
+    color: rgba(245, 240, 232, 0.7);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.reset-form-btn:hover {
+    background: rgba(201, 160, 80, 0.1);
+    border-color: rgba(201, 160, 80, 0.6);
+    color: #f5f0e8;
+}
+
+/* Guest count wrapper */
+.guest-count-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.guest-count-custom {
+    animation: slideDown 0.3s ease;
+}
+
+.guest-count-custom input {
+    width: 100px;
+    text-align: center;
+}
+
+/* "8+" button - slightly wider than number pills */
+.radio-label.guest-count-other {
+    min-width: 52px;
+    width: 52px;
+}
+
+/* Conditional field sections */
+.transport-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(201, 160, 80, 0.2);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.car-seats-field {
+    margin-top: 15px;
+    padding-left: 18px;
+    border-left: 2px solid rgba(201, 160, 80, 0.3);
+    animation: slideDown 0.3s ease;
 }
 
 /* Section 4 - Blank/Thank you */
 .section-blank {
-    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.85) 0%, rgba(26, 26, 46, 0.85) 100%);
 }
 
 .section-blank h2 {
@@ -304,7 +587,7 @@ location-card .time {
 
 /* Map intro section */
 .section-map-intro {
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.85) 0%, rgba(40, 40, 70, 0.85) 100%);
 }
 
 .section-map-intro h2 {
@@ -317,7 +600,7 @@ location-card .time {
 
 /* Closing section */
 .section-closing {
-    background: linear-gradient(135deg, rgba(40, 40, 70, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(40, 40, 70, 0.85) 0%, rgba(26, 26, 46, 0.85) 100%);
 }
 
 .section-closing h2 {
@@ -442,8 +725,8 @@ location-card .time {
     .section-announcement {
         background: linear-gradient(
             180deg,
-            rgba(26, 26, 46, 0.6) 0%,
-            rgba(26, 26, 46, 0.3) 40%,
+            rgba(26, 26, 46, 0.4) 0%,
+            rgba(26, 26, 46, 0.15) 40%,
             transparent 100%
         );
         backdrop-filter: none;
@@ -489,11 +772,11 @@ location-card .time {
     .section-blank {
         background: linear-gradient(
             180deg,
-            rgba(26, 26, 46, 0.92) 0%,
-            rgba(40, 40, 70, 0.88) 50%,
-            rgba(26, 26, 46, 0.92) 100%
+            rgba(26, 26, 46, 0.8) 0%,
+            rgba(40, 40, 70, 0.75) 50%,
+            rgba(26, 26, 46, 0.8) 100%
         );
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(5px);
     }
 
     .section-location h2,
@@ -505,8 +788,8 @@ location-card .time {
     .location-card,
     .form-container {
         padding: 25px 20px;
-        background: rgba(26, 26, 46, 0.8);
-        backdrop-filter: blur(10px);
+        background: rgba(26, 26, 46, 0.7);
+        backdrop-filter: blur(8px);
     }
 
     .location-card h3 {
@@ -588,7 +871,7 @@ location-card .time {
     flex-direction: column;
     justify-content: stretch;
     padding: 0;
-    background: rgba(26, 26, 46, 0.95);
+    background: rgba(26, 26, 46, 0.85);
     min-height: 100vh;
 }
 
@@ -633,15 +916,374 @@ location-card .time {
     border: 2px solid rgba(245, 240, 232, 0.3);
 }
 
-/* Fallback map styling when SMap is loaded */
-.map-container > div {
+/* Map container for direct Leaflet integration */
+.map-widget {
+    background: rgba(20, 20, 35, 0.95);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(201, 169, 89, 0.3);
     width: 100%;
+    max-width: 800px;
+}
+
+/* Tabs */
+.map-widget .tabs {
+    display: flex;
+    background: rgba(0,0,0,0.3);
+}
+.map-widget .tab {
+    flex: 1;
+    padding: 16px;
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+}
+.map-widget .tab:hover {
+    color: #c9a959;
+    background: rgba(201,169,89,0.1);
+}
+.map-widget .tab.active {
+    color: #c9a959;
+    background: rgba(201,169,89,0.15);
+    border-bottom-color: #c9a959;
+}
+.map-widget .tab-emoji { margin-right: 8px; }
+
+/* Map body layout */
+.map-widget .map-body {
+    display: block;
+}
+
+/* Horizontal pager */
+.map-widget .pager {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(201,169,89,0.2);
+}
+.map-widget .pager-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: rgba(201, 169, 89, 0.1);
+    border: 2px solid rgba(201, 169, 89, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    color: #888;
+    font-size: 0.9rem;
+}
+.map-widget .pager-dot::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(201, 169, 89, 0.4);
+    transition: all 0.3s ease;
+}
+.map-widget .pager-dot:hover {
+    background: rgba(201, 169, 89, 0.2);
+    border-color: #c9a959;
+    color: #c9a959;
+    transform: translateY(-2px);
+}
+.map-widget .pager-dot:hover::before {
+    background: #c9a959;
+}
+.map-widget .pager-dot.active {
+    background: rgba(201, 169, 89, 0.3);
+    border-color: #c9a959;
+    color: #c9a959;
+    box-shadow: 0 0 15px rgba(201, 169, 89, 0.4);
+}
+.map-widget .pager-dot.active::before {
+    background: #c9a959;
+    box-shadow: 0 0 8px rgba(201, 169, 89, 0.8);
+}
+
+/* Main map area */
+.map-widget .map-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Map layer selector */
+.map-widget .map-layers {
+    display: flex;
+    gap: 5px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(201,169,89,0.2);
+    flex-wrap: wrap;
+}
+.map-widget .layer-btn {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    background: rgba(201,169,89,0.1);
+    border: 1px solid rgba(201,169,89,0.2);
+    color: #888;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.map-widget .layer-btn:hover {
+    color: #c9a959;
+    background: rgba(201,169,89,0.2);
+}
+.map-widget .layer-btn.active {
+    color: #c9a959;
+    background: rgba(201,169,89,0.3);
+    border-color: #c9a959;
+}
+
+.map-widget #map {
+    height: 400px;
+    background: #1a1a2e;
+}
+
+/* Loading indicator */
+.map-widget .map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(20,20,35,0.9);
+    color: #c9a959;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    display: none;
+}
+.map-widget .map-loading.visible {
+    display: block;
+}
+
+/* Step info */
+.map-widget .step-info {
+    min-height: 140px;
+    max-height: 140px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(201,169,89,0.12) 0%, rgba(201,169,89,0.05) 100%);
+    border-bottom: 2px solid rgba(201,169,89,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.map-widget .step-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
     height: 100%;
+    background: linear-gradient(180deg, #c9a959 0%, rgba(201,169,89,0.3) 100%);
+}
+.map-widget .step-content {
+    flex: 1;
+    min-width: 0;
+    padding-left: 12px;
+}
+.map-widget .step-title {
+    color: #c9a959;
+    font-size: 1.3rem;
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.map-widget .step-desc {
+    color: #bbb;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.map-widget .step-duration {
+    color: #c9a959;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.map-widget .step-duration::before {
+    content: '⏱️';
+    font-size: 1.1rem;
+}
+
+/* Navigation buttons */
+.map-widget .step-nav {
+    display: flex;
+    gap: 12px;
+}
+.map-widget .nav-btn {
+    background: rgba(201,169,89,0.2);
+    border: 2px solid rgba(201,169,89,0.4);
+    color: #c9a959;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    font-weight: 500;
+}
+.map-widget .nav-btn:hover:not(:disabled) {
+    background: rgba(201,169,89,0.35);
+    border-color: #c9a959;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201, 169, 89, 0.3);
+}
+.map-widget .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+.map-widget .nav-btn .arrow {
+    font-size: 1.2rem;
+}
+
+/* Mapy.cz logo requirement */
+.map-widget .mapy-logo {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+.map-widget .mapy-logo img {
+    height: 24px;
+}
+
+/* Links */
+.map-widget .map-links {
+    padding: 14px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(201,169,89,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.map-widget .map-links a {
+    color: #c9a959;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+.map-widget .map-links a:hover { text-decoration: underline; }
+
+/* Leaflet overrides for map widget */
+.map-widget .leaflet-control-attribution {
+    background: rgba(0,0,0,0.7) !important;
+    color: #888 !important;
+    font-size: 10px;
+}
+.map-widget .leaflet-control-attribution a { color: #c9a959 !important; }
+.map-widget .leaflet-control-zoom a {
+    background: rgba(20,20,35,0.9) !important;
+    color: #c9a959 !important;
+    border-color: rgba(201,169,89,0.3) !important;
+}
+
+/* Custom markers for map */
+.custom-marker {
+    background: transparent;
+    border: none;
+}
+.marker-label {
+    background: rgba(20,20,35,0.95);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    border: 1px solid rgba(201,169,89,0.4);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.animated-marker {
+    width: 16px;
+    height: 16px;
+    background: #4865df;
+    border: 3px solid #e1e2de;
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(72,101,223,0.8);
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(72,101,223,0.8); }
+    50% { box-shadow: 0 0 25px rgba(72,101,223,1); }
+}
+
+/* Mobile responsive for map widget */
+@media (max-width: 768px) {
+    .map-widget .pager {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px;
+    }
+    .map-widget .pager-dot {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    .map-widget .step-info {
+        min-height: 160px;
+        max-height: 160px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px 20px;
+    }
+    .map-widget .step-title {
+        font-size: 1.1rem;
+    }
+    .map-widget .step-desc {
+        font-size: 0.85rem;
+    }
+    .map-widget .step-duration {
+        font-size: 0.9rem;
+    }
+    .map-widget .nav-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    .map-widget .step-nav {
+        width: 100%;
+        justify-content: center;
+    }
+    .map-widget .step-nav .nav-btn {
+        flex: 1;
+    }
+    .map-widget #map {
+        height: 350px;
+    }
 }
 
 /* Section Up */
 .section-up {
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(40, 40, 70, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.85) 0%, rgba(40, 40, 70, 0.85) 100%);
 }
 
 .section-up h2 {
