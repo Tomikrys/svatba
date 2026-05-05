@@ -143,7 +143,8 @@ export class RSVPForm {
             });
         }
 
-        // Show transport/ride fields and party-related fields only when attendance includes veselka
+        // Show transport/ride fields only when attending BOTH ceremony and veselka
+        // Show party-related fields (help offer, song request) for any veselka attendance
         const attendanceRadios = this.form.querySelectorAll('input[name="attendance"]');
         const transportSection = this.form.querySelector('.transport-section');
         const partySection = this.form.querySelector('.party-fields');
@@ -156,10 +157,12 @@ export class RSVPForm {
             attendanceRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
                     const isCeremonyOnly = radio.value === 'Jen na obřad' && radio.checked;
+                    const isBothEvents = radio.value === 'Na obřad i veselku' && radio.checked;
                     
-                    // Transport section (only relevant if attending veselka)
+                    // Transport section (only relevant if attending BOTH ceremony and veselka)
+                    // The question asks how to get FROM ceremony TO veselka
                     if (transportSection) {
-                        transportSection.style.display = isCeremonyOnly ? 'none' : 'block';
+                        transportSection.style.display = isBothEvents ? 'block' : 'none';
                     }
                     
                     // Party-related fields container
@@ -167,18 +170,24 @@ export class RSVPForm {
                         partySection.style.display = isCeremonyOnly ? 'none' : 'block';
                     }
                     
-                    // Help offer field (only relevant for veselka)
+                    // Help offer field (relevant for any veselka attendance)
                     if (helpOfferField) {
                         helpOfferField.style.display = isCeremonyOnly ? 'none' : 'block';
                     }
                     
-                    // Song request field (only relevant for veselka)
+                    // Song request field (relevant for any veselka attendance)
                     if (songRequestField) {
                         songRequestField.style.display = isCeremonyOnly ? 'none' : 'block';
                     }
                 });
             });
         }
+        
+        // Set initial state - hide optional fields until attendance is selected
+        // Transport section stays hidden (already hidden in HTML)
+        // Help offer and song request hidden until veselka attendance is selected
+        if (helpOfferField) helpOfferField.style.display = 'none';
+        if (songRequestField) songRequestField.style.display = 'none';
     }
 
     /**
@@ -429,7 +438,7 @@ export class RSVPForm {
     }
 
     /**
-     * Reset form to initial state
+     * Reset form to initial state (matches "Jen na veselku" default view)
      */
     resetForm() {
         if (!this.form) return;
@@ -443,17 +452,18 @@ export class RSVPForm {
             submitBtn.disabled = false;
         }
 
-        // Hide conditional fields
+        // Hide conditional fields that are context-dependent
         const guestCountCustom = this.form.querySelector('.guest-count-custom');
         if (guestCountCustom) guestCountCustom.style.display = 'none';
         
         const carSeatsField = this.form.querySelector('.car-seats-field');
         if (carSeatsField) carSeatsField.style.display = 'none';
         
+        // Transport section stays hidden (only shown for "Na obřad i veselku")
         const transportSection = this.form.querySelector('.transport-section');
         if (transportSection) transportSection.style.display = 'none';
         
-        // Hide party-related fields (they'll be shown when a veselka attendance is selected)
+        // Hide help offer and song request by default (shown when veselka attendance is selected)
         const helpOfferField = this.form.querySelector('[name="helpOffer"]')?.closest('.form-group');
         const songRequestField = this.form.querySelector('[name="songRequest"]')?.closest('.form-group');
         if (helpOfferField) helpOfferField.style.display = 'none';
@@ -507,8 +517,41 @@ export class RSVPForm {
 }
 
 // Auto-initialize when form section becomes visible
-export function initRSVPForm() {
+export function initRSVPForm(variant = 'party') {
+    if (variant === 'ceremony') {
+        stripFormForCeremony();
+    }
     const form = new RSVPForm();
     form.init();
     return form;
+}
+
+function stripFormForCeremony() {
+    const formEl = document.getElementById('rsvpForm');
+    if (!formEl) return;
+
+    // Remove attendance question but add hidden value
+    const attendanceGroup = formEl.querySelector('.attendance-group');
+    if (attendanceGroup) attendanceGroup.remove();
+    const hiddenAttendance = document.createElement('input');
+    hiddenAttendance.type = 'hidden';
+    hiddenAttendance.name = 'attendance';
+    hiddenAttendance.value = 'Jen na obřad';
+    formEl.appendChild(hiddenAttendance);
+
+    // Remove transport section
+    const transportSection = formEl.querySelector('.transport-section');
+    if (transportSection) transportSection.remove();
+
+    // Remove notes/allergy field
+    const notesField = formEl.querySelector('[name="notes"]')?.closest('.form-group');
+    if (notesField) notesField.remove();
+
+    // Remove help offer field
+    const helpField = formEl.querySelector('[name="helpOffer"]')?.closest('.form-group');
+    if (helpField) helpField.remove();
+
+    // Remove song request field
+    const songField = formEl.querySelector('[name="songRequest"]')?.closest('.form-group');
+    if (songField) songField.remove();
 }

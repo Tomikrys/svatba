@@ -4,6 +4,7 @@ export const BayerDitherShader = {
     uniforms: {
         tDiffuse: { value: null },
         resolution: { value: new THREE.Vector2() },
+        pixelSize: { value: 1.0 },
         colorNum: { value: 4.0 },
         threshold: { value: 0.5 },
         intensity: { value: 1.0 }
@@ -18,6 +19,7 @@ export const BayerDitherShader = {
     fragmentShader: `
         uniform sampler2D tDiffuse;
         uniform vec2 resolution;
+        uniform float pixelSize;
         uniform float colorNum;
         uniform float threshold;
         uniform float intensity;
@@ -49,11 +51,10 @@ export const BayerDitherShader = {
             return bayerMatrix8x8[y * 8 + x];
         }
 
-        vec3 dither(vec2 uv, float lum) {
+        vec3 dither(vec2 pixelCoord, float lum) {
             vec3 color = vec3(lum);
-            vec2 scaledCoord = floor(uv * resolution);
-            int x = int(mod(scaledCoord.x, 8.0));
-            int y = int(mod(scaledCoord.y, 8.0));
+            int x = int(mod(pixelCoord.x, 8.0));
+            int y = int(mod(pixelCoord.y, 8.0));
             float bayerVal = getBayerValue(x, y);
             float adjustedThreshold = (bayerVal - 0.5) * 0.5 + (threshold - 0.5);
             color.rgb += adjustedThreshold;
@@ -64,9 +65,16 @@ export const BayerDitherShader = {
         }
 
         void main() {
-            vec4 color = texture2D(tDiffuse, vUv);
+            // Calculate pixel block coordinates
+            vec2 screenCoord = vUv * resolution;
+            vec2 blockCoord = floor(screenCoord / pixelSize);
+            
+            // Sample from the center of the pixel block for consistent color
+            vec2 blockUv = (blockCoord + 0.5) * pixelSize / resolution;
+            vec4 color = texture2D(tDiffuse, blockUv);
+            
             float lum = dot(vec3(0.2126, 0.7152, 0.0722), color.rgb);
-            vec3 dithered = dither(vUv, lum);
+            vec3 dithered = dither(blockCoord, lum);
             gl_FragColor = vec4(mix(color.rgb, dithered, intensity), color.a);
         }
     `

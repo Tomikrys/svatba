@@ -4,6 +4,7 @@ export const ColoredBayerDitherShader = {
     uniforms: {
         tDiffuse: { value: null },
         resolution: { value: new THREE.Vector2() },
+        pixelSize: { value: 1.0 },
         colorNum: { value: 4.0 },
         threshold: { value: 0.5 },
         saturation: { value: 1.0 },
@@ -19,6 +20,7 @@ export const ColoredBayerDitherShader = {
     fragmentShader: `
         uniform sampler2D tDiffuse;
         uniform vec2 resolution;
+        uniform float pixelSize;
         uniform float colorNum;
         uniform float threshold;
         uniform float saturation;
@@ -66,10 +68,9 @@ export const ColoredBayerDitherShader = {
             return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
         }
 
-        vec3 ditherColor(vec2 uv, vec3 color) {
-            vec2 scaledCoord = floor(uv * resolution);
-            int x = int(mod(scaledCoord.x, 8.0));
-            int y = int(mod(scaledCoord.y, 8.0));
+        vec3 ditherColor(vec2 pixelCoord, vec3 color) {
+            int x = int(mod(pixelCoord.x, 8.0));
+            int y = int(mod(pixelCoord.y, 8.0));
             float bayerVal = getBayerValue(x, y);
             float adjustedThreshold = (bayerVal - 0.5) * 0.5 + (threshold - 0.5);
             vec3 ditheredColor = color + adjustedThreshold;
@@ -82,8 +83,15 @@ export const ColoredBayerDitherShader = {
         }
 
         void main() {
-            vec4 color = texture2D(tDiffuse, vUv);
-            vec3 dithered = ditherColor(vUv, color.rgb);
+            // Calculate pixel block coordinates
+            vec2 screenCoord = vUv * resolution;
+            vec2 blockCoord = floor(screenCoord / pixelSize);
+            
+            // Sample from the center of the pixel block for consistent color
+            vec2 blockUv = (blockCoord + 0.5) * pixelSize / resolution;
+            vec4 color = texture2D(tDiffuse, blockUv);
+            
+            vec3 dithered = ditherColor(blockCoord, color.rgb);
             gl_FragColor = vec4(mix(color.rgb, dithered, intensity), color.a);
         }
     `

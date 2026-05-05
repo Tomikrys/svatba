@@ -187,7 +187,52 @@ export class BaseViewer {
     }
 
     /**
-     * Load models from configuration
+     * Load a GLB file with Cache API caching.
+     * On first visit the model is fetched and stored in browser cache.
+     * On subsequent visits it loads instantly from cache.
+     * @param {string} url - Model URL
+     * @returns {Promise<ArrayBuffer>}
+     */
+    async _fetchWithCache(url) {
+        const CACHE_NAME = 'svatba3d-models-v1';
+        try {
+            const cache = await caches.open(CACHE_NAME);
+            const cachedResponse = await cache.match(url);
+            if (cachedResponse) {
+                console.log(`[Cache] HIT  ${url}`);
+                return await cachedResponse.arrayBuffer();
+            }
+            console.log(`[Cache] MISS ${url} — fetching & caching`);
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            // Clone before consuming — one copy for cache, one for us
+            cache.put(url, response.clone());
+            return await response.arrayBuffer();
+        } catch (e) {
+            // Cache API unavailable (e.g. non-HTTPS, Firefox private mode)
+            // Fall back to plain fetch
+            console.warn('[Cache] API unavailable, falling back to fetch:', e.message);
+            const response = await fetch(url);
+            return await response.arrayBuffer();
+        }
+    }
+
+    /**
+     * Parse a GLB ArrayBuffer into a GLTF result using GLTFLoader
+     * @param {ArrayBuffer} buffer - GLB data
+     * @param {string} path - Resource path for resolving relative URIs
+     * @returns {Promise<object>} - GLTF parse result
+     */
+    _parseGLB(buffer, path) {
+        return new Promise((resolve, reject) => {
+            this.loader.parse(buffer, path, resolve, reject);
+        });
+    }
+
+    /**
+     * Load models from configuration.
+     * Uses Cache API to persist GLB files in browser storage
+     * so they only download once.
      * @param {object} modelsConfig - Models configuration
      * @returns {Promise<void>}
      */
@@ -198,7 +243,9 @@ export class BaseViewer {
 
         for (const model of modelsConfig.models) {
             try {
-                const gltf = await this.loader.loadAsync(`${PATHS.MODELS}${model.file}`);
+                const url = `${PATHS.MODELS}${model.file}`;
+                const buffer = await this._fetchWithCache(url);
+                const gltf = await this._parseGLB(buffer, PATHS.MODELS);
                 const mesh = gltf.scene;
 
                 // Normalize and setup shadows

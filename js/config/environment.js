@@ -1,10 +1,14 @@
 // Environment configuration for dev/prod
 const ENV = typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'development' : 'production';
 
+// Base path detection for subdirectory routing (e.g., /aj-veselka/)
+const BASE = window.location.pathname.includes('aj-veselka') ? '../' : '';
+
 export const environment = {
     ENV,
     IS_DEV: ENV === 'development',
     IS_PROD: ENV === 'production',
+    BASE,
 };
 
 // CDN URLs
@@ -18,12 +22,12 @@ export const CDN = {
 
 // Paths
 export const PATHS = {
-    MODELS: 'models/',
-    MODELS_CONFIG: 'models/models.json',
-    SCENES_CONFIG: 'scenes.json',
-    CONTENT_CONFIG: 'content.json',
-    CSS: 'css/',
-    JS: 'js/',
+    MODELS: `${BASE}models/`,
+    MODELS_CONFIG: `${BASE}models/models.json`,
+    SCENES_CONFIG: `${BASE}scenes.json`,
+    CONTENT_CONFIG: `${BASE}content.json`,
+    CSS: `${BASE}css/`,
+    JS: `${BASE}js/`,
 };
 
 // API endpoints (if needed for form submission, etc.)
