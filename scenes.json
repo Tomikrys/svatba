@@ -118,7 +118,7 @@
     },
     {
       "name": "inside",
-      "timestamp": 1772875490383,
+      "timestamp": 1777996469365,
       "objects": [
         {
           "id": 1,
@@ -143,8 +143,8 @@
         }
       ],
       "camera": {
-        "position": { "x": 0.011, "y": -0.839, "z": 0.356 },
-        "target": { "x": 0.001, "y": -0.74, "z": -0.085 },
+        "position": { "x": 0.09680130498564793, "y": -0.8238461250686714, "z": 0.9571813234308381 },
+        "target": { "x": -0.27611933872376543, "y": -0.9436958529799616, "z": 0.05514830126777062 },
         "type": "perspective",
         "fov": 49,
         "zoom": 50
@@ -155,6 +155,7 @@
         "colorNum": 8,
         "bayerThreshold": 0.33,
         "bayerSaturation": 0.8,
+        "pixelSize": 1,
         "bias": 0.07,
         "cameraType": "perspective",
         "fov": 49,
@@ -165,13 +166,13 @@
         "directionalIntensity": 5,
         "fillLightIntensity": 2,
         "hemiLightIntensity": 2,
-        "exposure": 3,
         "bgColor": "#1a1a2e",
         "duotoneEnabled": true,
-        "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
+        "duotoneDarkColor": "#000000",
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.04
+        "exposure": 3,
+        "wiggleAmount": 0.08
       }
     },
     {
@@ -234,7 +235,7 @@
     },
     {
       "name": "up",
-      "timestamp": 1772886543179,
+      "timestamp": 1777996631670,
       "objects": [
         {
           "id": 1,
@@ -259,8 +260,8 @@
         }
       ],
       "camera": {
-        "position": { "x": -0.053, "y": 0.574, "z": 1.097 },
-        "target": { "x": -0.013, "y": -0.346, "z": 0.374 },
+        "position": { "x": 0.4212608725346879, "y": -0.11223082605693357, "z": 1.5757503012838663 },
+        "target": { "x": -0.21889234609535327, "y": -0.6581618056474934, "z": 0.42019222293877045 },
         "type": "perspective",
         "fov": 49,
         "zoom": 50
@@ -271,6 +272,7 @@
         "colorNum": 8,
         "bayerThreshold": 0.33,
         "bayerSaturation": 0.8,
+        "pixelSize": 1,
         "bias": 0.07,
         "cameraType": "perspective",
         "fov": 49,
@@ -281,13 +283,13 @@
         "directionalIntensity": 5,
         "fillLightIntensity": 2,
         "hemiLightIntensity": 2,
-        "exposure": 3,
         "bgColor": "#1a1a2e",
         "duotoneEnabled": true,
-        "duotoneDarkColor": "#000000",
         "duotoneIntensity": 0.18,
+        "duotoneDarkColor": "#000000",
         "duotoneLightColor": "#ff9500",
-        "wiggleAmount": 0.10
+        "exposure": 3,
+        "wiggleAmount": 0.08
       }
     },
     {

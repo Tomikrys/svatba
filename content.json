@@ -1,0 +1,38 @@
+{
+  "sections": [
+    {
+      "scene": "in front",
+      "type": "announcement",
+      "content": "<h1>Eliška</h1><div class=\"ampersand\">&</div><h1>Tomík</h1><div class=\"ornament\"></div><p class=\"subtitle\">Zveme vás na naši svatbu</p><p class=\"date\">19. září 2026</p>"
+    },
+    {
+      "scene": "detail",
+      "type": "location",
+      "content": "<h2>Místo konání</h2><div class=\"location-card\"><h3>Červený kostel</h3><p>Komenského náměstí 2<br>Brno - střed</p><p class=\"time\">11:30</p><p class=\"date\">19. září 2026</p></div>"
+    },
+    {
+      "scene": "inside",
+      "type": "info",
+      "content": "<h2>Svatební veselka</h2><p>Po obřadu vás zveme na veselku.</p><p>Našli jsme moc pěkné místo v Miroslavských Knínicích.</p><p>Pokud vám nevadí spaní pod stanem, tak máme celou louku vyhrazenou jenom k tomuto účelu.</p><p>Pokud byste chtěli spát v hotelu, tak doporučujeme ubytování <a href=\"https://vpanske.cz/ubytovani/\" target=\"_blank\">V Panské Zahradě</a> nebo <a href=\"https://hotelrysavy.cz/hotel/ubytovani/\" target=\"_blank\">Hotel Ryšavý</a>, který má vlastní dopravu ze svatby.</p><p>Pokud byste chtěli jet večer v rozumnou hodinu domů, budeme mít k dispozici řidiče, kteří vás po okolí rozvezou nebo hodí na vlak/autobus.</p>"
+    },
+    {
+      "scene": "mapa",
+      "type": "map",
+      "content": "<h2>Jak a kudy?</h2><div class=\"map-widget\"></div>"
+    },
+    {
+      "scene": "inside lightning",
+      "type": "form",
+      "content": "<h2>Potvrďte účast</h2><div class=\"form-container\"><form id=\"rsvpForm\"><div class=\"form-group\"><label>Tvůj email</label><input type=\"email\" name=\"email\" placeholder=\"vas@email.cz\"></div><div class=\"form-group\"><label>Počet osob</label><div class=\"radio-group horizontal\"><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"1\"><span>1</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"2\"><span>2</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"3\"><span>3</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"4\"><span>4</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"5\"><span>5</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"6\"><span>6</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"7\"><span>7</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"8\"><span>8</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"guestCount\" value=\"9\"><span>9</span></label></div></div><div class=\"form-group\"><label>Jména těch, co přihlašuješ *</label><textarea name=\"names\" rows=\"2\" required placeholder=\"Kája Hartelová, Jeni Ryšavý...\"></textarea></div><div class=\"form-group attendance-group\"><label>Jedete na obřad nebo aj na veselku? *</label><div class=\"radio-group\"><label class=\"radio-label\"><input type=\"radio\" name=\"attendance\" value=\"Jen na obřad\"><span>Jen na obřad</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"attendance\" value=\"Jen na veselku\"><span>Jen na veselku</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"attendance\" value=\"Na obřad i veselku\"><span>Na obřad i veselku</span></label></div></div><div class=\"transport-section\" style=\"display:none;\"><div class=\"form-group\"><label>Jak se plánujete přemístit z obřadu na veselku?</label><div class=\"radio-group horizontal\"><label class=\"radio-label\"><input type=\"radio\" name=\"transport\" value=\"Autem\"><span>Autem</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"transport\" value=\"Vlakem\"><span>Vlakem</span></label></div></div><div class=\"form-group car-seats-field\" style=\"display:none;\"><label>Kolik osob jste ochotni vzít autem?</label><div class=\"radio-group horizontal\"><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"1\"><span>1</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"2\"><span>2</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"3\"><span>3</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"4\"><span>4</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"5\"><span>5</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"carSeats\" value=\"6\"><span>6</span></label></div></div><div class=\"form-group\"><label>Budete večer potřebovat někam odvézt?</label><div class=\"radio-group horizontal\"><label class=\"radio-label\"><input type=\"radio\" name=\"needRide\" value=\"Ano\"><span>Ano</span></label><label class=\"radio-label\"><input type=\"radio\" name=\"needRide\" value=\"Ne\"><span>Ne</span></label></div></div></div><div class=\"form-group\"><label>Chtěli byste nám pomoct s organizací?</label><textarea name=\"helpOffer\" rows=\"2\" placeholder=\"Třeba na hodinku, s přípravou...\"></textarea></div><div class=\"form-group\"><label>Poznámky (alergie atd..)</label><textarea name=\"notes\" rows=\"2\" placeholder=\"Potravinové alergie, dietní omezení...\"></textarea></div><div class=\"form-group\"><label>Přání na písničku do playlistu</label><input type=\"text\" name=\"songRequest\" placeholder=\"Interpret - Název písně\"></div><div class=\"form-buttons\"><button type=\"submit\" class=\"submit-btn\">Odeslat ❤️</button><button type=\"button\" class=\"reset-btn\">Vymazat</button></div></form></div>"
+    },
+    {
+      "scene": "up",
+      "type": "closing",
+      "content": "<h2>Těšíme se na vás</h2><p>S láskou, Eliška & Tomík</p>"
+    }
+  ],
+  "default": {
+    "type": "blank",
+    "content": "<h2>Scene</h2><p></p>"
+  }
+}
