@@ -60,7 +60,16 @@ echo "📂 Using temp directory: $TEMP_DIR"
 cp dist/presentation.bundle.js "$TEMP_DIR/"
 cp map.html "$TEMP_DIR/"
 cp scenes.json "$TEMP_DIR/"
+cp content.json "$TEMP_DIR/"
 cp -r css "$TEMP_DIR/"
+
+# Custom domain: GitHub Pages needs CNAME in the published root, or
+# the site reverts to tomikrys.github.io/svatba/ on every deploy.
+echo "bude.church" > "$TEMP_DIR/CNAME"
+
+# English variant page (aj-veselka/index.html)
+mkdir -p "$TEMP_DIR/aj-veselka"
+cp aj-veselka/index.html "$TEMP_DIR/aj-veselka/"
 
 # Copy models but exclude uncompressed folder (too big for GitHub)
 mkdir -p "$TEMP_DIR/models"
@@ -75,7 +84,8 @@ cat > "$TEMP_DIR/index.html" << 'EOF'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tomáš & Eliška - Svatba 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="css/presentation.css">
 </head>
 <body>
@@ -93,6 +103,7 @@ cat > "$TEMP_DIR/index.html" << 'EOF'
 
     <div class="progress-dots" id="progressDots"></div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="presentation.bundle.js"></script>
 </body>
 </html>
