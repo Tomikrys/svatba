@@ -67,10 +67,16 @@ cp -r css "$TEMP_DIR/"
 echo "bude.church" > "$TEMP_DIR/CNAME"
 
 # "Aj na veselku" variant page (guests invited to both ceremony and party).
-# The source file is the dev version that loads unbundled ../js/presentation.js,
-# which does not exist on gh-pages. Rewrite it to load the built bundle instead.
+# The source file is the dev version: it loads unbundled ../js/presentation.js
+# and declares a Three.js importmap. Neither belongs in production — the built
+# bundle has Three.js inlined, and the importmap breaks iOS Safari < 16.4
+# (unsupported <script type="importmap"> aborts the following module script).
+# Strip the importmap block and repoint the module script at the bundle.
 mkdir -p "$TEMP_DIR/aj-veselka"
-sed 's#\.\./js/presentation\.js#../presentation.bundle.js#' aj-veselka/index.html > "$TEMP_DIR/aj-veselka/index.html"
+sed -e '/<script type="importmap">/,/<\/script>/d' \
+    -e '/<!-- Import Maps/d' \
+    -e 's#\.\./js/presentation\.js#../presentation.bundle.js#' \
+    aj-veselka/index.html > "$TEMP_DIR/aj-veselka/index.html"
 
 # Copy models but exclude uncompressed folder (too big for GitHub)
 mkdir -p "$TEMP_DIR/models"
