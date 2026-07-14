@@ -7,7 +7,7 @@
     "build": "esbuild js/presentation.js --bundle --outfile=dist/presentation.bundle.js --format=esm --minify",
     "build:dev": "esbuild js/presentation.js --bundle --outfile=dist/presentation.bundle.js --format=esm --sourcemap",
     "build:editor": "esbuild js/main.js --bundle --outfile=dist/editor.bundle.js --format=esm --minify",
-    "deploy": "npm run build && node scripts/deploy.js",
+    "deploy": "./deploy.sh",
     "serve": "python3 -m http.server 8080"
   },
   "keywords": [],
