@@ -28,7 +28,7 @@
     {
       "scene": "up",
       "type": "closing",
-      "content": "<h2>Těšíme se na vás</h2><p>S láskou, Eliška & Tomík</p>"
+      "content": "<h2>Těšíme se na vás</h2><p>S láskou, Eliška & Tomík</p><p class=\"gift-note\">Svatební dary pro nás nejsou prioritou, největším dárkem bude vaše přítomnost. Pokud byste nás ale i tak chtěli něčím potěšit, budeme rádi za jakýkoliv příspěvek na naši svatební cestu nebo rekonstrukci domečku.</p>"
     }
   ],
   "default": {
