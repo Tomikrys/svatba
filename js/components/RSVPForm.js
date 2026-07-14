@@ -258,8 +258,9 @@ export class RSVPForm {
             isValid = false;
         }
 
-        // Required: attendance
-        const attendanceChecked = this.form.querySelector('input[name="attendance"]:checked');
+        // Required: attendance (ceremony variant supplies it via a hidden input)
+        const attendanceChecked = this.form.querySelector('input[name="attendance"]:checked')
+            || this.form.querySelector('input[name="attendance"][type="hidden"]');
         if (!attendanceChecked) {
             const attendanceGroup = this.form.querySelector('.attendance-group');
             if (attendanceGroup) {
@@ -312,8 +313,9 @@ export class RSVPForm {
             formData.append(`entry.${ENTRY_IDS.names}`, names.value);
         }
 
-        // Attendance type
-        const attendance = this.form.querySelector('[name="attendance"]:checked');
+        // Attendance type (ceremony variant supplies it via a hidden input)
+        const attendance = this.form.querySelector('[name="attendance"]:checked')
+            || this.form.querySelector('input[name="attendance"][type="hidden"]');
         if (attendance?.value) {
             formData.append(`entry.${ENTRY_IDS.attendance}`, attendance.value);
         }

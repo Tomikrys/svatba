@@ -58,7 +58,6 @@ echo "📂 Using temp directory: $TEMP_DIR"
 
 # Copy built files
 cp dist/presentation.bundle.js "$TEMP_DIR/"
-cp map.html "$TEMP_DIR/"
 cp scenes.json "$TEMP_DIR/"
 cp content.json "$TEMP_DIR/"
 cp -r css "$TEMP_DIR/"
@@ -67,9 +66,11 @@ cp -r css "$TEMP_DIR/"
 # the site reverts to tomikrys.github.io/svatba/ on every deploy.
 echo "bude.church" > "$TEMP_DIR/CNAME"
 
-# English variant page (aj-veselka/index.html)
+# "Aj na veselku" variant page (guests invited to both ceremony and party).
+# The source file is the dev version that loads unbundled ../js/presentation.js,
+# which does not exist on gh-pages. Rewrite it to load the built bundle instead.
 mkdir -p "$TEMP_DIR/aj-veselka"
-cp aj-veselka/index.html "$TEMP_DIR/aj-veselka/"
+sed 's#\.\./js/presentation\.js#../presentation.bundle.js#' aj-veselka/index.html > "$TEMP_DIR/aj-veselka/index.html"
 
 # Copy models but exclude uncompressed folder (too big for GitHub)
 mkdir -p "$TEMP_DIR/models"
