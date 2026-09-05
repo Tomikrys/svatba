@@ -6,6 +6,10 @@ dist/
 gh-pages/
 deploy/
 
+# Stray gh-pages artifacts left behind if a deploy is interrupted mid-checkout
+/CNAME
+/presentation.bundle.js
+
 # Large uncompressed models (too big for GitHub)
 models/uncompressed/
 

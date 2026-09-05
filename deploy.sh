@@ -123,16 +123,57 @@ echo -e "${GREEN}✅ Files prepared${NC}"
 # ============================================
 echo -e "\n${YELLOW}🌐 Deploying to gh-pages branch...${NC}"
 
-# Stash any uncommitted changes on current branch
-git stash --quiet 2>/dev/null || true
+# Stash any uncommitted changes on current branch so a mid-run failure can't
+# strand us on gh-pages with the wrong working tree. We restore in the trap.
+STASH_CREATED=0
+if ! git diff --quiet HEAD 2>/dev/null || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+    git stash push --include-untracked --quiet -m "deploy.sh auto-stash" && STASH_CREATED=1
+fi
 
-# Check if gh-pages branch exists locally or remotely
-if git show-ref --verify --quiet refs/heads/gh-pages 2>/dev/null; then
-    echo "📌 Switching to existing gh-pages branch"
+# Cleanup trap: whatever happens next (push failure, network glitch, ctrl-c),
+# get the user back to their original branch with their working tree restored.
+cleanup() {
+    local exit_code=$?
+    if [ -n "$TEMP_DIR" ] && [ -d "$TEMP_DIR" ]; then
+        rm -rf "$TEMP_DIR"
+    fi
+    # If we're not on the original branch, hop back.
+    local now_branch
+    now_branch=$(git branch --show-current 2>/dev/null || echo "")
+    if [ "$now_branch" != "$CURRENT_BRANCH" ]; then
+        echo -e "${YELLOW}↩️  Returning to ${CURRENT_BRANCH}...${NC}"
+        git checkout --quiet "$CURRENT_BRANCH" 2>/dev/null || \
+            git checkout --force --quiet "$CURRENT_BRANCH" 2>/dev/null || true
+    fi
+    # Restore stashed changes if we created a stash.
+    if [ "$STASH_CREATED" = "1" ]; then
+        git stash pop --quiet 2>/dev/null || echo -e "${YELLOW}⚠️  Could not auto-pop stash — run 'git stash pop' manually.${NC}"
+    fi
+    if [ $exit_code -ne 0 ]; then
+        echo -e "${RED}❌ Deploy failed (exit $exit_code).${NC}"
+    fi
+    exit $exit_code
+}
+trap cleanup EXIT INT TERM
+
+# Fetch remote gh-pages so we deploy on top of the latest published state.
+# Without this, a local gh-pages branch that lagged behind origin would push
+# a diverged history and reject.
+git fetch --quiet origin gh-pages 2>/dev/null || true
+
+# Check out gh-pages, forcing it to match origin so we never carry stale local commits.
+if git show-ref --verify --quiet refs/remotes/origin/gh-pages 2>/dev/null; then
+    if git show-ref --verify --quiet refs/heads/gh-pages 2>/dev/null; then
+        echo "📌 Resetting local gh-pages to origin/gh-pages"
+        git checkout gh-pages
+        git reset --hard origin/gh-pages
+    else
+        echo "📌 Checking out gh-pages from remote"
+        git checkout -b gh-pages origin/gh-pages
+    fi
+elif git show-ref --verify --quiet refs/heads/gh-pages 2>/dev/null; then
+    echo "📌 Switching to existing local gh-pages branch"
     git checkout gh-pages
-elif git show-ref --verify --quiet refs/remotes/origin/gh-pages 2>/dev/null; then
-    echo "📌 Checking out gh-pages from remote"
-    git checkout -b gh-pages origin/gh-pages
 else
     echo "📌 Creating new orphan gh-pages branch"
     git checkout --orphan gh-pages
@@ -145,9 +186,6 @@ find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} \;
 # Copy new files
 cp -r "$TEMP_DIR"/* .
 
-# Remove temp directory
-rm -rf "$TEMP_DIR"
-
 # Remove .DS_Store files
 find . -name ".DS_Store" -delete
 
@@ -159,11 +197,28 @@ git push origin gh-pages
 echo -e "${GREEN}✅ Deployed to gh-pages${NC}"
 
 # ============================================
-# Step 4: Return to original branch
+# Step 4: Return to original branch & optionally push it
 # ============================================
 echo -e "\n${YELLOW}🔙 Returning to ${CURRENT_BRANCH}...${NC}"
 git checkout "$CURRENT_BRANCH"
-git stash pop --quiet 2>/dev/null || true
+if [ "$STASH_CREATED" = "1" ]; then
+    git stash pop --quiet 2>/dev/null || echo -e "${YELLOW}⚠️  Could not auto-pop stash — run 'git stash pop' manually.${NC}"
+    STASH_CREATED=0
+fi
+
+# Disarm the trap: we're back on the source branch cleanly.
+trap - EXIT INT TERM
+
+# If the source branch has commits ahead of its upstream, offer to push them too.
+UPSTREAM="origin/${CURRENT_BRANCH}"
+if git rev-parse --verify --quiet "$UPSTREAM" >/dev/null; then
+    AHEAD=$(git rev-list --count "${UPSTREAM}..HEAD" 2>/dev/null || echo 0)
+    if [ "$AHEAD" -gt 0 ]; then
+        echo -e "\n${YELLOW}📤 ${CURRENT_BRANCH} is ${AHEAD} commit(s) ahead of ${UPSTREAM}. Pushing...${NC}"
+        git push origin "$CURRENT_BRANCH"
+        echo -e "${GREEN}✅ Pushed ${CURRENT_BRANCH}${NC}"
+    fi
+fi
 
 echo -e "\n${GREEN}✨ Deployment complete!${NC}"
 echo -e "🌍 Your site will be available at: https://tomikrys.github.io/svatba/"
