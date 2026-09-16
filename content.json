@@ -13,7 +13,7 @@
     {
       "scene": "inside",
       "type": "info",
-      "content": "<h2>Svatební veselka</h2><p>Po obřadu vás zveme na veselku.</p><p>Našli jsme moc pěkné místo v Miroslavských Knínicích.</p><p>Pokud vám nevadí spaní pod stanem, tak máme celou louku vyhrazenou jenom k tomuto účelu.</p><p>Pokud byste chtěli spát v hotelu, tak doporučujeme ubytování <a href=\"https://vpanske.cz/ubytovani/\" target=\"_blank\">V Panské Zahradě</a> nebo <a href=\"https://hotelrysavy.cz/hotel/ubytovani/\" target=\"_blank\">Hotel Ryšavý</a>, který má vlastní dopravu ze svatby.</p><p>Pokud byste chtěli jet večer v rozumnou hodinu domů, budeme mít k dispozici řidiče, kteří vás po okolí rozvezou nebo hodí na vlak/autobus.</p>"
+      "content": "<h2>Svatební veselka</h2><p>Po obřadu vás zveme na veselku.</p><p>Našli jsme <a href=\"https://maps.app.goo.gl/znEMUbUDujLg45Bh9\">moc pěkné místo v Miroslavských Knínicích</a>.</p><p>Pokud vám nevadí spaní pod stanem, tak máme celou louku vyhrazenou jenom k tomuto účelu.</p><p>Pokud byste chtěli spát v hotelu, tak doporučujeme ubytování <a href=\"https://vpanske.cz/ubytovani/\" target=\"_blank\">V Panské Zahradě</a> nebo <a href=\"https://hotelrysavy.cz/hotel/ubytovani/\" target=\"_blank\">Hotel Ryšavý</a>, který má vlastní dopravu ze svatby.</p><p>Pokud byste chtěli jet večer v rozumnou hodinu domů, budeme mít k dispozici řidiče, kteří vás po okolí rozvezou nebo hodí na vlak/autobus.</p>"
     },
     {
       "scene": "mapa",
